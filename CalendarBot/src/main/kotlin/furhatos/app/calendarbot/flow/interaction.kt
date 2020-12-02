@@ -6,15 +6,43 @@ import furhatos.app.calendarbot.nlu.*
 
 val Start : State = state(Interaction) {
 
-    onEntry {
-        furhat.ask("Hi there. Do you like robots?")
+    onResponse<Add>{
+        goto(AddEvent)
     }
 
-    onResponse<Yes>{
-        furhat.say("I like humans.")
+    onResponse<Remove>{
+        goto(RemoveEvent)
     }
 
-    onResponse<No>{
-        furhat.say("That's sad.")
+    onResponse<ListEv> {
+        goto(ListEvent)
     }
+
+    onResponse<Edit> {
+        goto(EditEvent)
+    }
+
+    onResponse<Greeting> {
+        goto(Greet)
+    }
+}
+
+val AddEvent = state(Interaction) {
+
+}
+
+val RemoveEvent = state(Interaction) {
+
+}
+
+val ListEvent = state(Interaction) {
+
+}
+
+val EditEvent = state(Interaction) {
+
+}
+
+val Greet = state(Interaction) {
+
 }
