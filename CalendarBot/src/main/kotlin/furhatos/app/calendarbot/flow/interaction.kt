@@ -4,9 +4,17 @@ import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
 
+
+
 val Start : State = state(Interaction) {
 
+    onEntry {
+        furhat.ask("")
+    }
+
     onResponse<Add>{
+        val date = it.intent.date
+        furhat.say("${date?.text}")
         goto(AddEvent)
     }
 
@@ -28,6 +36,10 @@ val Start : State = state(Interaction) {
 }
 
 val AddEvent = state(Interaction) {
+    onEntry {
+
+
+    }
 
 }
 

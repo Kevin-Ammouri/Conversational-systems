@@ -6,14 +6,15 @@ import furhatos.app.calendarbot.nlu.*
 import furhatos.nlu.ComplexEnumEntity
 import furhatos.nlu.EnumEntity
 import furhatos.nlu.Intent
+import furhatos.nlu.common.Date
 import furhatos.util.Language
 import furhatos.nlu.common.Number
 
 
 //class BuyFruit(var fruits : FruitList? = null) : Intent()
-class Add : Intent() {
+class Add(var date : Date? = null): Intent() {
     override fun getExamples(lang: Language): List<String> {
-        return listOf("")
+        return listOf("Schedule a meeting @date", "book an event @date")
     }
 }
 
@@ -39,6 +40,25 @@ class DaysOfTheWeek : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
         return listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
         // TODO: Separate weekdays from weekends
+    }
+}
+
+
+class DateWrapper (
+        var date : Date? = null) : ComplexEnumEntity() {
+
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("@date")
+    }
+    override fun toText(): String {
+        return generate("$date")
+    }
+}
+
+class Month : EnumEntity(stemming = true, speechRecPhrases = true) {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("January", "February", "March", "April", "May", "June", "July", 
+        "August", "September", "October", "November", "December")
     }
 }
 
