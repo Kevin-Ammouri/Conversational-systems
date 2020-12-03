@@ -1,20 +1,20 @@
 package furhatos.app.calendarbot.nlu
 
 
-import furhatos.app.calendarbot.Event
-import furhatos.app.calendarbot.nlu.*
 import furhatos.nlu.ComplexEnumEntity
 import furhatos.nlu.EnumEntity
 import furhatos.nlu.Intent
 import furhatos.nlu.common.Date
 import furhatos.util.Language
 import furhatos.nlu.common.Number
+import furhatos.nlu.common.Time
 
 
 //class BuyFruit(var fruits : FruitList? = null) : Intent()
-class Add(var date : Date? = null): Intent() {
+class Add(var dateWrapper : DateWrapper? = null): Intent() {
     override fun getExamples(lang: Language): List<String> {
-        return listOf("Schedule a meeting @date", "book an event @date")
+        return listOf("Schedule a meeting on the @${dateWrapper?.date}", "book an event @${dateWrapper?.date}",
+        "Schedule a meeting on the @${dateWrapper?.date} at @${dateWrapper?.time}")
     }
 }
 
@@ -45,13 +45,15 @@ class DaysOfTheWeek : EnumEntity(stemming = true, speechRecPhrases = true) {
 
 
 class DateWrapper (
+        var time : Time? = null,
         var date : Date? = null) : ComplexEnumEntity() {
 
     override fun getEnum(lang: Language): List<String> {
-        return listOf("@date")
+        return listOf("@time @date", "@date @time", "@date", "@time")
     }
+
     override fun toText(): String {
-        return generate("$date")
+        return generate("$time, $date")
     }
 }
 

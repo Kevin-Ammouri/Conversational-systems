@@ -1,10 +1,10 @@
 package furhatos.app.calendarbot.flow
 
+import furhatos.app.calendarbot.Event
 import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
-
-
+import furhatos.nlu.Intent
 
 val Start : State = state(Interaction) {
 
@@ -13,9 +13,13 @@ val Start : State = state(Interaction) {
     }
 
     onResponse<Add>{
-        val date = it.intent.date
-        furhat.say("${date?.text}")
-        goto(AddEvent)
+        val date = it.intent.dateWrapper?.date
+        val time = it.intent.dateWrapper?.time
+        var ev = Event()
+        ev.setDate(date?.toText())
+        ev.setStartTime(time?.toText())
+        furhat.say("${ev.date}, ${ev.startTime}, ${ev.nextUnfilled()}")
+
     }
 
     onResponse<Remove>{
@@ -36,12 +40,12 @@ val Start : State = state(Interaction) {
 }
 
 val AddEvent = state(Interaction) {
-    onEntry {
-
+    onEntry{
 
     }
-
 }
+
+
 
 val RemoveEvent = state(Interaction) {
 
@@ -56,5 +60,8 @@ val EditEvent = state(Interaction) {
 }
 
 val Greet = state(Interaction) {
-
+    onEntry {
+        furhat.say { "Hello, how can I help you?"}
+        goto(Start)
+    }
 }

@@ -19,4 +19,17 @@ public class Constants {
 
     public static final String DONE = "DONE";
 
+    public static final String[] MONTHS = {
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+    };
+
+    public static final String[] TIMES = {
+            "seconds", "Seconds", "minutes", "Minutes", "hour", "hours", "Hour", "Hours"
+    };
+
+    public static final String[] TIMESOFTHEDAY = {
+            "Morning", "Afternoon", "Evening", "morning", "afternoon" , "evening"
+    };
+
 }
