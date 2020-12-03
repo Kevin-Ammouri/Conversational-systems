@@ -18,7 +18,8 @@ val Start : State = state(Interaction) {
         var ev = Event()
         ev.setDate(date?.toText())
         ev.setStartTime(time?.toText())
-        furhat.say("${ev.date}, ${ev.startTime}, ${ev.nextUnfilled()}")
+        ev.setDuration("5 hours")
+        furhat.say("${ev.date}, ${ev.startTime}, ${ev.duration}, ${ev.nextUnfilled()}")
 
     }
 

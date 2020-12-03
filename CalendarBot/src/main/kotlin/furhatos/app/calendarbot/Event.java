@@ -38,7 +38,9 @@ public class Event {
         String number = null;
         for(int i = 0; i < StringBits.length; i++) {
             if (number == null) {
-                if (StringBits[i].matches("-?\\d+th")) { //notice the th, pretty hardcoded
+                if (StringBits[i].matches("-?\\d+th") ||
+                        StringBits[i].matches("-?\\d+nd") ||
+                    StringBits[i].matches("-?\\d+st")) {
                     number = StringBits[i].substring(0, 2);
                 }
             }
@@ -79,7 +81,8 @@ public class Event {
                 break;
 
         }
-        this.startTime = number + " " + amORpm;
+        String startTime = number + " " + amORpm;
+        this.startTime = Constants.TO24HOUR.get(startTime);
     }
 
     public void setDuration(String duration) {
@@ -103,7 +106,8 @@ public class Event {
                 break;
 
         }
-        this.duration = number + " " + time;
+        String duration_sent = number + " " + time;
+        this.duration = Constants.TO24HOUR.get(duration_sent);
     }
 
     public void setTimeOfDay(String timeofday) {
