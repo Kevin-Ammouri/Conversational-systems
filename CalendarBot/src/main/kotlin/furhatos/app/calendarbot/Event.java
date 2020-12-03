@@ -46,7 +46,7 @@ public class Event {
             }
             if (month == null) {
                 for (int j = 0; j < Constants.MONTHS.length; j++) {
-                    if (StringBits[i].equals(Constants.MONTHS[j])) {
+                    if (StringBits[i].equalsIgnoreCase(Constants.MONTHS[j])) {
                         month = StringBits[i];
                     }
                 }
@@ -63,11 +63,11 @@ public class Event {
         String amORpm = null;
         for(int i = 0; i < StringBits.length; i++) {
             if (amORpm == null) {
-                if (StringBits[i].equals("m")) {
+                if (StringBits[i].equalsIgnoreCase("m")) {
                     assert i > 0;
-                    if (StringBits[i-1].equals("p")) {
+                    if (StringBits[i-1].equalsIgnoreCase("p")) {
                         amORpm = "pm";
-                    } else if (StringBits[i-1].equals("a")) {
+                    } else if (StringBits[i-1].equalsIgnoreCase("a")) {
                         amORpm = "am";
                     }
                 }
@@ -97,7 +97,7 @@ public class Event {
             }
             if (time == null) {
                 for (int j = 0; j < Constants.TIMES.length; j++) {
-                    if (StringBits[i].equals(Constants.TIMES[j])) {
+                    if (StringBits[i].equalsIgnoreCase(Constants.TIMES[j])) {
                         time = StringBits[i];
                     }
                 }
@@ -115,7 +115,7 @@ public class Event {
         for(int i = 0; i < StringBits.length; i++) {
             if (this.timeOfDay == null) {
                 for (int j = 0; j < Constants.TIMESOFTHEDAY.length; j++) {
-                    if (StringBits[i].equals(Constants.TIMESOFTHEDAY[j])) {
+                    if (StringBits[i].equalsIgnoreCase(Constants.TIMESOFTHEDAY[j])) {
                         this.timeOfDay = StringBits[i];
                     }
                 }
@@ -123,5 +123,25 @@ public class Event {
                 break;
             }
         }
+    }
+
+    public void setDay(String day) {
+        String[] StringBits = date.split(" ");
+        if (StringBits.length == 1) {
+            this.day = day;
+        }
+        for(int i = 0; i < StringBits.length; i++) {
+            for(int j = 0; j < Constants.DAYS.length; j++) {
+                if (this.day == null)
+                    if (StringBits[i].equalsIgnoreCase(Constants.DAYS[j]))
+                        this.day = StringBits[i];
+                else
+                    break;
+            }
+        }
+    }
+
+    public void setName(String name) { //TODO: NOT DONE YET
+        this.name = name;
     }
 }

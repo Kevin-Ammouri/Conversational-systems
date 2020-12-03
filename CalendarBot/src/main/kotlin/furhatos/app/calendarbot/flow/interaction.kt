@@ -1,10 +1,13 @@
 package furhatos.app.calendarbot.flow
 
+import furhatos.app.calendarbot.Constants
 import furhatos.app.calendarbot.Event
 import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
 import furhatos.nlu.Intent
+
+var ev = Event()
 
 val Start : State = state(Interaction) {
 
@@ -15,12 +18,33 @@ val Start : State = state(Interaction) {
     onResponse<Add>{
         val date = it.intent.dateWrapper?.date
         val time = it.intent.dateWrapper?.time
-        var ev = Event()
         ev.setDate(date?.toText())
         ev.setStartTime(time?.toText())
-        ev.setDuration("5 hours")
-        furhat.say("${ev.date}, ${ev.startTime}, ${ev.duration}, ${ev.nextUnfilled()}")
-
+        var nextInfo = ev.nextUnfilled()
+        while (nextInfo != Constants.DONE) {
+            if (nextInfo == Constants.DAY) {
+                var day = furhat.askFor<DaysOfTheWeek>(random("" +
+                        "Sure, which day?", "Okay. Which day of the week?"
+                ))
+                ev.setDay(day?.toText())
+            } else if (nextInfo == Constants.DURATION) {
+                var duration = furhat.askFor<Duration>(random(
+                        "Sure, how long will the event last?", "Okay, how long will the event go on for?"
+                ))
+                ev.setDuration(duration?.toText())
+            } else if (nextInfo == Constants.START_TIME) {
+                var startTime = furhat.askFor<Time>(random(
+                        "Sure, when will the event begin?", "Okay, when does the event start?"
+                ))
+                ev.setStartTime(startTime?.toText())
+            } else if (nextInfo == Constants.NAME) {
+                var name = furhat.askFor<Name>(random(
+                        "Sure, what will you name the event?", "Okay, what is the name of the event?"
+                ))
+            }
+            nextInfo = ev.nextUnfilled()
+        }
+        furhat.say("Your event has been added to your calendar.")
     }
 
     onResponse<Remove>{

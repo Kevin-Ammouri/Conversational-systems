@@ -10,7 +10,6 @@ import furhatos.nlu.common.Number
 import furhatos.nlu.common.Time
 
 
-//class BuyFruit(var fruits : FruitList? = null) : Intent()
 class Add(var dateWrapper : DateWrapper? = null): Intent() {
     override fun getExamples(lang: Language): List<String> {
         return listOf("Schedule a meeting on the @${dateWrapper?.date}", "book an event @${dateWrapper?.date}",
@@ -57,6 +56,31 @@ class DateWrapper (
     }
 }
 
+class Duration (
+        var number : Number? = Number(1),
+        var time : Times? = null) : ComplexEnumEntity() {
+
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("@number @time", "@time", "@number")
+    }
+}
+
+class Name (var name : String? = null) : ComplexEnumEntity() {
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("the name is @name", "name the event @name")
+    }
+
+}
+
+class DayContext (
+        var count : Number? = Number(1),
+        var period : Periods? = null) : ComplexEnumEntity() {
+
+    override fun getEnum(lang: Language): List<String> {
+        return listOf("@count @period", "next @period", "tomorrow")
+    }
+}
+
 class Month : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
         return listOf("January", "February", "March", "April", "May", "June", "July", 
@@ -70,12 +94,9 @@ class Periods : EnumEntity(stemming = true, speechRecPhrases = true) {
     }
 }
 
-class DayContext (
-        var count : Number? = Number(1),
-        var period : Periods? = null) : ComplexEnumEntity() {
-
+class Times : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("@count @period", "next @period", "tomorrow")
+        return listOf("Second", "Seconds", "Minute", "Minutes", "Hour", "Hours")
     }
 }
 
