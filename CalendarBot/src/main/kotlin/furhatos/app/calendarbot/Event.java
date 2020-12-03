@@ -103,7 +103,7 @@ public class Event {
                 break;
 
         }
-        this.duration = "number" + " " + time;
+        this.duration = number + " " + time;
     }
 
     public void setTimeOfDay(String timeofday) {
