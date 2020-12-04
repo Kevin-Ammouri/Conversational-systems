@@ -3,6 +3,12 @@ package furhatos.app.calendarbot;
 import java.util.HashMap;
 
 public class Constants {
+    public static final String ADD_INTENT = "ADD";
+
+    public static final String REMOVE_INTENT = "REMOVE";
+
+    public static final String LIST_INTENT = "LIST";
+
     public static final String DAY = "DAY";
 
     public static final String DATE = "DATE";
@@ -35,7 +41,7 @@ public class Constants {
     };
 
     public static final String[] TIMESOFTHEDAY = {
-            "Morning", "Afternoon", "Evening", "morning", "afternoon" , "evening"
+            "Morning", "Afternoon", "Evening"
     };
 
     public static final HashMap<String, String> TO24HOUR = createTO24HOUR();
