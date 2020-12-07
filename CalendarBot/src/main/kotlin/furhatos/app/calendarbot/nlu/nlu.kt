@@ -10,6 +10,7 @@ import furhatos.nlu.common.Number
 import furhatos.nlu.common.Time
 
 
+
 class Add(var dateWrapper : DateWrapper? = null): Intent() {
     override fun getExamples(lang: Language): List<String> {
         return listOf("Schedule a meeting on the @${dateWrapper?.date}", "book an event @${dateWrapper?.date}",
@@ -48,11 +49,16 @@ class DateWrapper (
         var date : Date? = null) : ComplexEnumEntity() {
 
     override fun getEnum(lang: Language): List<String> {
-        return listOf("@time @date", "@date @time", "@date", "@time")
+        return listOf("at @time on the @date",
+                " on the @date at @time",
+                "on the @date",
+                " at @time",
+                "at @time @date",
+                "@date at @time"
+        )
     }
-
     override fun toText(): String {
-        return generate("$time, $date")
+        return generate("$time $date")
     }
 }
 

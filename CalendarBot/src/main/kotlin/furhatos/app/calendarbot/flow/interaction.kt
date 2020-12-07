@@ -18,6 +18,7 @@ val Start : State = state(Interaction) {
     onResponse<Add>{
         val date = it.intent.dateWrapper?.date
         val time = it.intent.dateWrapper?.time
+
         ev.setDate(date?.toText())
         ev.setStartTime(time?.toText())
         var nextInfo = ev.nextUnfilled()
