@@ -1,6 +1,8 @@
 package furhatos.app.calendarbot;
 
 public class Event {
+    public String intent = null;
+
     public String day = null;
     public String date = null;
     public String dayContext = null;
@@ -11,6 +13,8 @@ public class Event {
     public String timeOfDay = null;
 
     public String name = null;
+
+    private String ID = null;
 
     public Event() {}
 
@@ -26,10 +30,12 @@ public class Event {
                 return Constants.DURATION;
             } else if (startTime == null && (endTime != null || duration != null)) {
                 return Constants.START_TIME;
+            } else if (startTime == null && endTime == null && duration == null) {
+                return Constants.START_TIME;
             }
         }
 
-        return Constants.DAY;
+        return Constants.DATE;
     }
 
     public void setDate(String date) {
@@ -57,7 +63,11 @@ public class Event {
         this.date = number + " " + month;
     }
 
-    public void setStartTime(String time) {
+    public void setTime(String time, String startOrEnd) {
+        /*
+            Sets both the start time and end time in military time
+            depending on the second argument input.
+         */
         String[] StringBits = time.split(" ");
         String number = null;
         String amORpm = null;
@@ -81,8 +91,11 @@ public class Event {
                 break;
 
         }
-        String startTime = number + " " + amORpm;
-        this.startTime = Constants.TO24HOUR.get(startTime);
+        String toMilitary = Constants.TO24HOUR.get(number + " " + amORpm);
+        if (startOrEnd.equalsIgnoreCase(Constants.START_TIME))
+            this.startTime = toMilitary;
+        else if (startOrEnd.equalsIgnoreCase(Constants.END_TIME))
+            this.endTime = toMilitary;
     }
 
     public void setDuration(String duration) {
@@ -143,5 +156,35 @@ public class Event {
 
     public void setName(String name) { //TODO: NOT DONE YET
         this.name = name;
+    }
+
+    public void setDayContext(String dayContext) { //TODO: NOT DONE YET
+        this.dayContext = dayContext;
+    }
+
+    public boolean createID() {
+        if (date != null && startTime != null) {
+            String id = date + startTime;
+            id = id.replaceAll(":", "");
+            id = id.replaceAll("-", "");
+            id = id.replaceAll(" ", "");
+            setID(id);
+            return true;
+        }
+        return false;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public String getID() {
+        return this.ID;
+    }
+
+    public String toString() {
+        return "[{Day: " + day + ", Date: " + date + ", DayContext: " + dayContext + "}\n{" +
+                "Start Time: " + startTime + ", End Time: " + endTime + ", Duration: " + duration +
+                ", Time of the day: " + timeOfDay + "}\n{" + "Name: " + name + "}]\n";
     }
 }
