@@ -67,7 +67,7 @@ class AddStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
 
 class BookingStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("Meeting", "EventObject", "Appointment", "Everything")
+        return listOf("Meeting", "Event", "Appointment", "Everything")
     }
 }
 
@@ -76,7 +76,7 @@ class Duration (
         var time : Times? = null) : ComplexEnumEntity() {
 
     override fun getEnum(lang: Language): List<String> {
-        return listOf("@number @time")
+        return listOf("@number @time", "@number and a half @time")
     }
 
     override fun toText(): String {

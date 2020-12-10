@@ -1,15 +1,13 @@
 package furhatos.app.calendarbot.flow
 
-import furhatos.app.calendarbot.Constants
-import furhatos.app.calendarbot.EventObject
-import furhatos.app.calendarbot.GoogleCalendar
-import furhatos.app.calendarbot.Tools
+import furhatos.app.calendarbot.*
 import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
 
 var ev = EventObject()
 var calendar = GoogleCalendar()
+var dateFormatter = DateFormatter()
 
 val Start : State = state(Interaction) {
 
@@ -42,6 +40,7 @@ val Start : State = state(Interaction) {
 
         if (date != null) {
             ev.setDate(date.toText())
+            ev.date = dateFormatter.getDate(ev.date)
         }
 
         if (duration != null) {
@@ -58,23 +57,28 @@ val Start : State = state(Interaction) {
             ev.setName(name.toText())
         }
 
+        if (startTime != null && duration != null) {
+            ev.endTime = dateFormatter.addTime(ev.startTime, ev.duration)
+        }
+
 
         var nextInfo = ev.nextUnfilled()
         while (nextInfo != Constants.DONE) {
+            System.out.println("NEXT INFO REQUIRED: " + nextInfo.toString())
             System.out.println(ev.toString())
             if (nextInfo == Constants.DATE) {
                 var date = furhat.askFor<Date>(random("" +
                         "Sure, which date does this event concern?", "Okay. Which date?"
                 ))
                 ev.setDate(date?.toText())
+                ev.date = dateFormatter.getDate(ev.date)
             } else if (nextInfo == Constants.DURATION) {
                 var duration = furhat.askFor<Duration>(random(
                         "Sure, how long will the event last?", "Okay, how long will the event go on for?"
                 ))
                 System.out.println("DURATIONNNN: " + duration)
                 ev.setDuration(duration?.toText())
-                //TODO: Since we now have start time and duration, we should calculate the end time and insert it into the event object.
-                ev.setTime("9 p m", Constants.END_TIME) // TEMPORARY HARDCODED STATEMENT
+                ev.endTime = dateFormatter.addTime(ev.startTime, ev.duration)
             } else if (nextInfo == Constants.START_TIME) {
                 var startTime = furhat.askFor<Time>(random(
                         "Sure, when will the event begin?", "Okay, when does the event start?"
@@ -84,12 +88,12 @@ val Start : State = state(Interaction) {
                 var name = furhat.askFor<Name>(random(
                         "Sure, what will you name the event?", "Okay, what is the name of the event?"
                 ))
-                System.out.println("NAAAAME: " + name)
-                ev.setName(name?.toText())
+                System.out.println("NAAAAME: " + name.toString())
+                //ev.setName(name?.toText())
             }
             nextInfo = ev.nextUnfilled()
         }
-        System.out.println(ev.toString())
+
         ev.createID()
         calendar.TakeAction(ev)
         furhat.say("Your event has been added to your calendar.")
