@@ -1,14 +1,15 @@
 package furhatos.app.calendarbot.flow
 
 import furhatos.app.calendarbot.Constants
-import furhatos.app.calendarbot.Event
+import furhatos.app.calendarbot.EventObject
+import furhatos.app.calendarbot.GoogleCalendar
 import furhatos.app.calendarbot.Tools
 import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
-import furhatos.nlu.Intent
 
-var ev = Event()
+var ev = EventObject()
+var calendar = GoogleCalendar()
 
 val Start : State = state(Interaction) {
 
@@ -89,6 +90,8 @@ val Start : State = state(Interaction) {
             nextInfo = ev.nextUnfilled()
         }
         System.out.println(ev.toString())
+        ev.createID()
+        calendar.TakeAction(ev)
         furhat.say("Your event has been added to your calendar.")
         goto(Restart)
     }

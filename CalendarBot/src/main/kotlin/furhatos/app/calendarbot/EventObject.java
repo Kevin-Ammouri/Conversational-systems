@@ -1,6 +1,6 @@
 package furhatos.app.calendarbot;
 
-public class Event {
+public class EventObject {
     public String intent = null;
 
     //For adding
@@ -21,7 +21,7 @@ public class Event {
     // For listing
     public String dateTo = null;
 
-    public Event() {}
+    public EventObject() {}
 
     public String nextUnfilled() {
         if (day != null || date != null) {
