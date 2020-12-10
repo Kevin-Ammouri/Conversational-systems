@@ -2,6 +2,7 @@ package furhatos.app.calendarbot.flow
 
 import furhatos.app.calendarbot.Constants
 import furhatos.app.calendarbot.Event
+import furhatos.app.calendarbot.Tools
 import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
@@ -17,19 +18,22 @@ val Start : State = state(Interaction) {
 
     onResponse<Add>{
         ev.intent = Constants.ADD_INTENT
-        val startTime = it.intent.data?.startTime
-        val date = it.intent.data?.date
-        val day = it.intent.data?.day
-        val duration = it.intent.data?.duration
-        val dayContext = it.intent.data?.dayContext
-        val endTime = it.intent.data?.endTime
-        val timeOfTheday = it.intent.data?.timeOfDay
-        val name = it.intent.data?.name
 
+        val startTime = it.intent.startTime
+        val date = it.intent.date
+        val duration = it.intent.duration
+        val endTime = it.intent.endTime
+        val name = it.intent.name
+        val dayContext = it.intent.dayContext
+
+        System.out.println("INTENT: " + Constants.ADD_INTENT)
         System.out.println("DATE: " + date)
         System.out.println("START TIME: " + startTime)
+        System.out.println("END TIME: " + endTime)
         System.out.println("DURATION: " + duration)
-
+        System.out.println("DAY CONTEXT: " + dayContext)
+        System.out.println("Name: " + name)
+        System.out.println("------------------------------------")
 
         if (startTime != null) {
             ev.setTime(startTime.toText(), Constants.START_TIME)
@@ -39,25 +43,15 @@ val Start : State = state(Interaction) {
             ev.setDate(date.toText())
         }
 
-        if (day != null) {
-            ev.setDay(day.toText())
-        }
-
         if (duration != null) {
             ev.setDuration(duration.toText())
         }
 
-        if (dayContext != null) {
-            ev.setDayContext(dayContext.toText())
-        }
 
         if (endTime != null) {
             ev.setTime(endTime.toText(), Constants.END_TIME)
         }
 
-        if (timeOfTheday != null) {
-            ev.setTimeOfDay(timeOfTheday.toText())
-        }
 
         if (name != null) {
             ev.setName(name.toText())
@@ -68,7 +62,7 @@ val Start : State = state(Interaction) {
         while (nextInfo != Constants.DONE) {
             System.out.println(ev.toString())
             if (nextInfo == Constants.DATE) {
-                var date = furhat.askFor<DaysOfTheWeek>(random("" +
+                var date = furhat.askFor<Date>(random("" +
                         "Sure, which date does this event concern?", "Okay. Which date?"
                 ))
                 ev.setDate(date?.toText())
@@ -96,48 +90,81 @@ val Start : State = state(Interaction) {
         }
         System.out.println(ev.toString())
         furhat.say("Your event has been added to your calendar.")
+        goto(Restart)
     }
 
     onResponse<Remove>{
-        goto(RemoveEvent)
+        ev.intent = Constants.REMOVE_INTENT
+        val startTime = it.intent.startTime
+        val date = it.intent.date
+        val name = it.intent.name
+        val dayContext = it.intent.dayContext
+
+        System.out.println("INTENT: " + Constants.REMOVE_INTENT)
+        System.out.println("DATE: " + date)
+        System.out.println("START TIME: " + startTime)
+        System.out.println("DAY CONTEXT: " + dayContext)
+        System.out.println("Name: " + name)
+        System.out.println("------------------------------------")
+
+        if (name != null) {
+            //Fetch id from stored mapping (HashMap<Name, ID>)
+            var id = "" //TODO: TEMPORARY VARIABLE
+            ev.id = id
+        } else {
+            if (date != null) {
+                ev.setDate(date.toText())
+            } else {
+                var date = furhat.askFor<Date>(random("" +
+                        "Sure, which date does this event concern?", "Okay. Which date?"
+                ))
+                ev.setDate(date?.toText())
+            }
+
+            if (startTime != null) {
+                ev.setTime(startTime.toText(), Constants.START_TIME)
+            } else {
+                var startTime = furhat.askFor<Time>(random(
+                        "Sure, when will the event begin?", "Okay, when does the event start?"
+                ))
+                ev.setTime(startTime?.toText(), Constants.START_TIME)
+            }
+            ev.createID()
+        }
+
+        var RemoveSuccess = Tools.SendToRemoveAPI(ev.id)
+        if (RemoveSuccess) {
+            furhat.say { "Your event has been removed from the calendar." }
+        } else {
+            furhat.say {"Your event as described as not been found"}
+        }
+        goto(Restart)
     }
 
     onResponse<ListEv> {
-        goto(ListEvent)
+        ev.intent = Constants.LIST_INTENT
+        System.out.println("INTENT: " + Constants.LIST_INTENT)
+
+        val startTime = it.intent.startTime
+        val startDate = it.intent.startDate
+        val endDate = it.intent.endDate
+        val dayContext = it.intent.dayContext
+        val bookStatement = it.intent.bookStatement
+
+        System.out.println("START DATE: " + startDate)
+        System.out.println("END DATE: " + endDate)
+        System.out.println("START TIME: " + startTime)
+        System.out.println("DAY CONTEXT: " + dayContext)
+        System.out.println("BOOK STATEMENT: " + bookStatement)
+        System.out.println("bookStatement ends with s?: " + Tools.FormType(bookStatement.toString()))
+        System.out.println("------------------------------------")
+
+        goto(Restart)
     }
-
-    onResponse<Edit> {
-        goto(EditEvent)
-    }
-
-    onResponse<Greeting> {
-        goto(Greet)
-    }
 }
 
-val AddEvent = state(Interaction) {
-    onEntry{
-
-    }
-}
-
-
-
-val RemoveEvent = state(Interaction) {
-
-}
-
-val ListEvent = state(Interaction) {
-
-}
-
-val EditEvent = state(Interaction) {
-
-}
-
-val Greet = state(Interaction) {
+val Restart = state(Interaction) {
     onEntry {
-        furhat.say { "Hello, how can I help you?"}
         goto(Start)
     }
 }

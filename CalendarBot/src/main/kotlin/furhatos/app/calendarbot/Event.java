@@ -3,6 +3,7 @@ package furhatos.app.calendarbot;
 public class Event {
     public String intent = null;
 
+    //For adding
     public String day = null;
     public String date = null;
     public String dayContext = null;
@@ -14,7 +15,11 @@ public class Event {
 
     public String name = null;
 
+    // For removing
     private String ID = null;
+
+    // For listing
+    public String dateTo = null;
 
     public Event() {}
 
