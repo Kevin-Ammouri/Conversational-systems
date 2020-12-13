@@ -5,9 +5,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
-
-//Defines what version of Java to use.
-sourceCompatibility = 1.8
+apply plugin: 'application'
 
 //Defines how Kotlin should compile.
 compileKotlin {
@@ -37,12 +35,16 @@ compileTestKotlin {
 
 repositories {
     mavenLocal()
+    mavenCentral()
     maven { url "https://furhatrobotics.bintray.com/furhat" }
     jcenter()
 }
 
 dependencies {
     compile 'com.furhatrobotics.furhatos:furhat-commons:1.22.0'
+    compile 'com.google.api-client:google-api-client:1.23.0'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    compile 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'
 }
 
 jar {
