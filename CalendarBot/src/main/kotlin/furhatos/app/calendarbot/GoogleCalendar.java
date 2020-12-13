@@ -70,6 +70,7 @@ public class GoogleCalendar {
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
+
     /**
      * Method for inserting a given EventObject into the google Calendar.
      * @param ev, The event object that is generated from furhat to be inserted .
@@ -78,26 +79,22 @@ public class GoogleCalendar {
      */
     private String InsertEvent(EventObject ev) {
         try {
-            String startTime = ev.date + "T" + ev.startTime + "-00:00";// + "-01:00";
-            String endTime = ev.date + "T" + ev.endTime + "-00:00";// + "-01:00";
+            String startTime = ev.date + "T" + ev.startTime + "-00:00";
+            String endTime = ev.date + "T" + ev.endTime + "-00:00";
 
             Event event = new Event()
                     .setSummary(ev.name)
-                    //.setLocation("800 Howard St., San Francisco, CA 94103")
-                    //.setDescription("A chance to hear more about Google's developer products.")
                     .setId(ev.getID());
 
-            DateTime startDateTime = new DateTime(startTime);//"2020-12-04T09:00:00-07:00");
+            DateTime startDateTime = new DateTime(startTime);
             EventDateTime start = new EventDateTime()
                     .setDateTime(startDateTime);
-                    //.setTimeZone("Stockholm");
 
             event.setStart(start);
 
-            DateTime endDateTime = new DateTime(endTime);//"2020-12-04T17:00:00-07:00");
+            DateTime endDateTime = new DateTime(endTime);
             EventDateTime end = new EventDateTime()
                     .setDateTime(endDateTime);
-                    //.setTimeZone("Stockholm");
 
             event.setEnd(end);
             System.out.println(startTime);
@@ -109,7 +106,8 @@ public class GoogleCalendar {
             System.out.printf("EventObject created: %s\n", event.getHtmlLink());
 
             return "Successfully inserted event.";
-        }catch (Exception e){
+        }catch (Exception e) {
+            e.printStackTrace();
             System.out.printf("Unsuccessful of inserting the event");
             return "Unsuccessful of inserting the event";
         }

@@ -1,9 +1,23 @@
 package furhatos.app.calendarbot;
 
 import java.io.*;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 
 public class Tools {
+    public static boolean GoogleAPICall(EventObject ev) {
+        GoogleCalendar calendar;
+        try {
+            calendar = new GoogleCalendar();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public static boolean SendToRemoveAPI(String ID) {
         //Skicka id:et till Lucas
         //Lucas skickar en boolean från sin metod, True eller False
@@ -113,6 +127,9 @@ public class Tools {
     }
 
     public static String wordToNumber(String word) {
+        if (word.matches("-?\\d+"))
+            return word;
+
         int result = 0;
         int finalResult = 0;
 

@@ -1,5 +1,7 @@
 package furhatos.app.calendarbot;
 
+import java.text.ParseException;
+
 public class EventObject {
     public String intent = null;
 
@@ -21,7 +23,11 @@ public class EventObject {
     // For listing
     public String dateTo = null;
 
-    public EventObject() {}
+    public DateFormatter Formatter;
+
+    public EventObject() {
+        Formatter = new DateFormatter();
+    }
 
     public String nextUnfilled() {
         if (day != null || date != null) {
@@ -65,7 +71,14 @@ public class EventObject {
             if (number != null && month != null)
                 break;
         }
-        this.date = number + " " + month;
+
+        String number_month = number + " " + month;
+
+        try {
+            this.date = Formatter.getDate(number_month);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setTime(String time, String startOrEnd) {
@@ -109,23 +122,34 @@ public class EventObject {
         String time = null;
         for(int i = 0; i < StringBits.length; i++) {
             if (number == null) {
-                if (StringBits[i].matches("-?\\d+")) {
-                    number = StringBits[i];
-                }
+                String numFound = Tools.wordToNumber(StringBits[i]);
+                if (numFound.equalsIgnoreCase("0"))
+                    continue;
+
+                number = numFound;
             }
+
             if (time == null) {
-                for (int j = 0; j < Constants.TIMES.length; j++) {
-                    if (StringBits[i].equalsIgnoreCase(Constants.TIMES[j])) {
+                for (int j = 0; j < Constants.TIMES.length; j++)
+                    if (StringBits[i].equalsIgnoreCase(Constants.TIMES[j]))
                         time = StringBits[i];
-                    }
-                }
             }
+
             if (number != null && time != null)
                 break;
 
         }
+
         String duration_sent = number + " " + time;
         this.duration = Constants.TO24HOUR.get(duration_sent);
+
+        if (this.startTime != null && endTime == null) {
+            try {
+                this.endTime = Formatter.addTime(this.startTime, this.duration);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void setTimeOfDay(String timeofday) {
