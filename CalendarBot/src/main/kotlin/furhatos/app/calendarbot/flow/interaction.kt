@@ -100,6 +100,7 @@ val Start : State = state(Interaction) {
         System.out.println("Name: " + name)
         System.out.println("------------------------------------")
 
+
         if (name != null) { // This can only be valid once name is fixed, as well as the methods in Tools
             //Fetch id from stored mapping (HashMap<Name, ID>)
             var id = Tools.getIdFromName(name.toString())
@@ -152,19 +153,37 @@ val Start : State = state(Interaction) {
         System.out.println("bookStatement ends with s?: " + Tools.formType(bookStatement.toString()))
         System.out.println("------------------------------------")
 
+        if (startDate == null) {
+            furhat.say("Specify a day or date")
+            goto(Restart)
+        }
+
+        if (dayContext == null) {
+            ev.setDate(startDate.toString())
+        } else {
+            var new_date = startDate.toString() + " " + dayContext.toString()
+            ev.setDate(new_date)
+        }
+
         var listedEvents = false
 
+        // TODO: Handle multiple events on multiple days (add a for loop from start to end date)
+        //  and surround the code below for multiple events within a day. This is done through
+        //  setting date to whatever the day was 
+
+        // Handles multiple events within a day
         if (Tools.formType(bookStatement.toString())) {
             ev.intent = Constants.LIST_INTENT
             if (endDate == null) {
-                ev.setDate(startDate?.toText())
                 if (startTime == null) {
+                    System.out.println(ev.date)
                     var events = calendar.ListEvents(ev)
+                    System.out.println(events)
                     if (events == null || events.size <= 0) {
-                        furhat.say("You do not have anything coming up " + startDate.toString().toLowerCase())
+                        furhat.say("You do not have anything coming up " + ev.day)
                         goto(Restart)
                     }
-                    furhat.say(startDate.toString() + " you have")
+                    furhat.say(ev.day + " you have")
 
                     for(event in events) {
                         furhat.say(
@@ -175,15 +194,35 @@ val Start : State = state(Interaction) {
                     }
                     listedEvents = true
                 } else if (Tools.interOptions(startTime.toString(), Constants.TIMEORCONTEXT) == Constants.YES) {
-                    // This is probably time context, e.g. afternoon or something,
-                    // so display everything in that time bound.
-
+                    ev.setTimeContext(startTime.toString())
+                    var time_bounds = Constants.TimeOfDay.get(ev.timeContext)
+                    ev.startTime = time_bounds?.get(0)
+                    ev.endTime = time_bounds?.get(1)
+                    System.out.println("--- Before calling ListEvents (API) ---")
+                    System.out.println("time bounds: " + time_bounds.toString())
+                    System.out.println("ev.date: " + ev.date)
+                    System.out.println("ev.startTime: " + ev.startTime)
+                    System.out.println("ev.endTime: " + ev.endTime)
+                    var events = calendar.ListEvents(ev)
+                    if (events == null || events.size <= 0) {
+                        furhat.say("You do not have anything coming up " + ev.day + " in the " + ev.timeContext)
+                        goto(Restart)
+                    }
+                    furhat.say(ev.day + " in the " + ev.timeContext + " you have")
+                    for(event in events) {
+                        furhat.say(
+                                Tools.interOptions(event.get(Constants.BOOK_STATEMENT), Constants.PRONOUNCE) + " " +
+                                        event.get(Constants.BOOK_STATEMENT)?.toLowerCase() + " at " +
+                                        Constants.FROM24HOUR.get(event.get(Constants.START_TIME)) + " called " + event.get(Constants.NAME)
+                        )
+                    }
                     listedEvents = true
                 }
             }
         }
 
         if (!listedEvents) {
+            // Handles a single event
             ev.intent = Constants.GET_INTENT
             if (startDate != null) {
                 ev.setDate(startDate.toText())

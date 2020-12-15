@@ -47,6 +47,8 @@ class ListEv(var listStatement: ListStatement? = null,
     }
 }
 
+class DateAndDayContext(var date: Date? = null, var dayContext: DayContext? = null) : ComplexEnumEntity()
+
 class ListStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
         return listOf("List", "Show", "Name", "Specify", "Tell", "Say")

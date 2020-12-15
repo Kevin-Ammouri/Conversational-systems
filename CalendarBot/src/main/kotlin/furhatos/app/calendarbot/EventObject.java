@@ -82,11 +82,11 @@ public class EventObject {
 
         try {
             if (number_month == null) {
-                System.out.println(date);
                 this.date = Formatter.format(date);
             } else {
                 this.date = Formatter.getDate(number_month);
             }
+            this.day = date.toLowerCase();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -165,7 +165,7 @@ public class EventObject {
     }
 
     public void setTimeContext(String timeofday) {
-        String[] StringBits = date.split(" ");
+        String[] StringBits = timeofday.split(" ");
         for(int i = 0; i < StringBits.length; i++) {
             if (this.timeContext == null) {
                 for (int j = 0; j < Constants.TIMESOFTHEDAY.length; j++) {
@@ -175,22 +175,6 @@ public class EventObject {
                 }
             } else {
                 break;
-            }
-        }
-    }
-
-    public void setDay(String day) {
-        String[] StringBits = date.split(" ");
-        if (StringBits.length == 1) {
-            this.day = day;
-        }
-        for(int i = 0; i < StringBits.length; i++) {
-            for(int j = 0; j < Constants.DAYS.length; j++) {
-                if (this.day == null)
-                    if (StringBits[i].equalsIgnoreCase(Constants.DAYS[j]))
-                        this.day = StringBits[i];
-                else
-                    break;
             }
         }
     }
