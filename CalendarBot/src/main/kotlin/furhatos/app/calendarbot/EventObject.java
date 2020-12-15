@@ -13,7 +13,7 @@ public class EventObject {
     public String startTime = null;
     public String endTime = null;
     public String duration = null;
-    public String timeOfDay = null;
+    public String timeContext = null;
 
     public String name = null;
 
@@ -22,6 +22,9 @@ public class EventObject {
 
     // For listing
     public String dateTo = null;
+
+    //For interaction
+    public String bookStatement = null;
 
     public DateFormatter Formatter;
 
@@ -49,10 +52,11 @@ public class EventObject {
         return Constants.DATE;
     }
 
-    public void setDate(String date) {
+    public boolean setDate(String date) {
         String[] StringBits = date.split(" ");
         String month = null;
         String number = null;
+        boolean specificDate = false;
         for(int i = 0; i < StringBits.length; i++) {
             if (number == null) {
                 if (StringBits[i].matches("-?\\d+th") ||
@@ -68,8 +72,10 @@ public class EventObject {
                     }
                 }
             }
-            if (number != null && month != null)
+            if (number != null && month != null) {
+                specificDate = true;
                 break;
+            }
         }
 
         String number_month = number + " " + month;
@@ -79,6 +85,7 @@ public class EventObject {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return specificDate;
     }
 
     public void setTime(String time, String startOrEnd) {
@@ -129,11 +136,11 @@ public class EventObject {
                 number = numFound;
             }
 
-            if (time == null) {
+            if (time == null)
                 for (int j = 0; j < Constants.TIMES.length; j++)
                     if (StringBits[i].equalsIgnoreCase(Constants.TIMES[j]))
                         time = StringBits[i];
-            }
+
 
             if (number != null && time != null)
                 break;
@@ -152,13 +159,13 @@ public class EventObject {
         }
     }
 
-    public void setTimeOfDay(String timeofday) {
+    public void setTimeContext(String timeofday) {
         String[] StringBits = date.split(" ");
         for(int i = 0; i < StringBits.length; i++) {
-            if (this.timeOfDay == null) {
+            if (this.timeContext == null) {
                 for (int j = 0; j < Constants.TIMESOFTHEDAY.length; j++) {
                     if (StringBits[i].equalsIgnoreCase(Constants.TIMESOFTHEDAY[j])) {
-                        this.timeOfDay = StringBits[i];
+                        this.timeContext = StringBits[i];
                     }
                 }
             } else {
@@ -183,12 +190,35 @@ public class EventObject {
         }
     }
 
-    public void setName(String name) { //TODO: NOT DONE YET
+    public void setName(String name) {
         this.name = name;
     }
 
-    public void setDayContext(String dayContext) { //TODO: NOT DONE YET
-        this.dayContext = dayContext;
+    public void setDayContext(String dayContext) {
+        String[] StringBits = dayContext.split(" ");
+        String number = null;
+        String timeOfDay = null;
+        for(int i = 0; i < StringBits.length; i++) {
+            if (number == null) {
+                String numFound = Tools.wordToNumber(StringBits[i]);
+                if (numFound.equalsIgnoreCase("0"))
+                    continue;
+
+                number = numFound;
+            }
+
+            if (timeOfDay == null)
+                for (int j = 0; j < Constants.TIMES.length; j++)
+                    if (StringBits[i].equalsIgnoreCase(Constants.TIMESOFTHEDAY[j]))
+                        timeOfDay = StringBits[i];
+
+
+            if (number != null && timeOfDay != null)
+                break;
+
+        }
+
+        this.dayContext = number + " " + timeOfDay;
     }
 
     public boolean createID() {
@@ -214,6 +244,6 @@ public class EventObject {
     public String toString() {
         return "[{Day: " + day + ", Date: " + date + ", DayContext: " + dayContext + "}\n{" +
                 "Start Time: " + startTime + ", End Time: " + endTime + ", Duration: " + duration +
-                ", Time of the day: " + timeOfDay + "}\n{" + "Name: " + name + "}]\n";
+                ", Time of the day: " + timeContext + "}\n{" + "Name: " + name + "}]\n";
     }
 }

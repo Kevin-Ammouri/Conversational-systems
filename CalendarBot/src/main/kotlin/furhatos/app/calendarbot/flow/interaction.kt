@@ -6,6 +6,7 @@ import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
 
 var ev = EventObject()
+var calendar = GoogleCalendar()
 
 val Start : State = state(Interaction) {
 
@@ -23,11 +24,20 @@ val Start : State = state(Interaction) {
         val endTime = it.intent.endTime
         val name = it.intent.name
         val dayContext = it.intent.dayContext //Once 2, 3.. weeks/months have been implemented, this will be used.
+        val bookStatement = it.intent.bookStatement
+
+        ev.bookStatement = Tools.removePlural(bookStatement.toString())
 
         //startTime can be afternoon, we need to redefine how we handle startTime.
         if (startTime != null) { ev.setTime(startTime.toText(), Constants.START_TIME) }
 
-        if (date != null) { ev.setDate(date.toText()) }
+        if (date != null) {
+            var specific_date = ev.setDate(date.toText())
+            if (!specific_date && dayContext != null) {
+                val new_date = date.toString() + "" + dayContext.toString()
+                ev.setDate(new_date)
+            }
+        }
 
         if (duration != null) { ev.setDuration(duration.toText()) }
 
@@ -63,6 +73,7 @@ val Start : State = state(Interaction) {
             nextInfo = ev.nextUnfilled()
         }
         ev.createID()
+        //Tools.mapNameToID(ev)
         /*
         var success = Tools.GoogleAPICall(ev)
         if (success) {
@@ -113,19 +124,18 @@ val Start : State = state(Interaction) {
             ev.createID()
         }
 
+        /*
         var success = Tools.SendToRemoveAPI(ev.id)
         if (success) {
             furhat.say { "Your event has been removed from the calendar." }
         } else {
             furhat.say {"Your event as described has not been found"}
         }
+        */
         goto(Restart)
     }
 
     onResponse<ListEv> {
-        ev.intent = Constants.LIST_INTENT
-        System.out.println("INTENT: " + Constants.LIST_INTENT)
-
         val startTime = it.intent.startTime
         val startDate = it.intent.startDate
         val endDate = it.intent.endDate
@@ -137,8 +147,53 @@ val Start : State = state(Interaction) {
         System.out.println("START TIME: " + startTime)
         System.out.println("DAY CONTEXT: " + dayContext)
         System.out.println("BOOK STATEMENT: " + bookStatement)
-        System.out.println("bookStatement ends with s?: " + Tools.FormType(bookStatement.toString()))
+        System.out.println("bookStatement ends with s?: " + Tools.formType(bookStatement.toString()))
         System.out.println("------------------------------------")
+
+        if (Tools.formType(bookStatement.toString())) {
+            ev.intent = Constants.LIST_INTENT
+            if (endDate == null) {
+                var specificDate = ev.setDate(startDate?.toText())
+                if (startTime == null) {
+                    var events = calendar.ListEvents(ev)
+                    if (specificDate) {
+                        furhat.say{"on the " + startDate.toString() + " you have"}
+                    } else {
+                        furhat.say{startDate.toString() + " you have"}
+                    }
+                    for(event in events) {
+                        //furhat.say{event.get(Constants.)}
+                    }
+                    // List all events on that day
+                } else {
+                    // This is probably time context, e.g. afternoon or something,
+                    // so display everything in that time bound.
+                }
+            }
+        } else {
+            ev.intent = Constants.GET_INTENT
+            if (startDate != null) {
+                ev.setDate(startDate.toText())
+            } else {
+                var date = furhat.askFor<Date>(random("" +
+                        "Sure, which date does this event concern?", "Okay. Which date?"
+                ))
+                ev.setDate(date?.toText())
+            }
+
+            if (startTime != null) {
+                ev.setTime(startTime.toText(), Constants.START_TIME)
+            } else {
+                var startTime = furhat.askFor<Time>(random(
+                        "Sure, when will the event begin?", "Okay, when does the event start?"
+                ))
+                ev.setTime(startTime?.toText(), Constants.START_TIME)
+            }
+            ev.createID()
+
+
+        }
+
 
         goto(Restart)
     }

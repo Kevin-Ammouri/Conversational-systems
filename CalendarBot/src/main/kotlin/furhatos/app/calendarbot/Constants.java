@@ -1,5 +1,6 @@
 package furhatos.app.calendarbot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Constants {
@@ -15,6 +16,8 @@ public class Constants {
 
     public static final String DATE = "DATE";
 
+    public static final String END_DATE = "END_DATE";
+
     public static final String DAY_CONTEXT = "DAY_CONTEXT";
 
     public static final String START_TIME = "START_TIME";
@@ -23,7 +26,11 @@ public class Constants {
 
     public static final String DURATION = "DURATION";
 
-    public static final String TIME_OF_DAY = "TIME_OF_DAY";
+    public static final String TIME_CONTEXT = "TIME_CONTEXT";
+
+    public static final String ALL_DAY = "ALL_DAY";
+
+    public static final String BOOK_STATEMENT = "BOOK_STATEMENT";
 
     public static final String NAME = "NAME";
 
@@ -43,8 +50,10 @@ public class Constants {
     };
 
     public static final String[] TIMESOFTHEDAY = {
-            "Morning", "Afternoon", "Evening"
+            "Morning", "Afternoon", "Evening", "Night"
     };
+
+    public static final HashMap<String, ArrayList<String>> TimeOfDay = Tools.createTimeContextList();
 
     public static final HashMap<String, String> TO24HOUR = Tools.createTO24HOUR();
 

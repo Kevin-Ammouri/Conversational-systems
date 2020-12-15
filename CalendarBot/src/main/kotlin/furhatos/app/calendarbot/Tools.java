@@ -1,36 +1,36 @@
 package furhatos.app.calendarbot;
 
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
+
 import java.io.*;
 import java.security.GeneralSecurityException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Tools {
-    public static boolean GoogleAPICall(EventObject ev) {
-        GoogleCalendar calendar;
-        try {
-            calendar = new GoogleCalendar();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    public static boolean SendToRemoveAPI(String ID) {
-        //Skicka id:et till Lucas
-        //Lucas skickar en boolean från sin metod, True eller False
-
-        return false;
-    }
-
-    public static boolean FormType(String bookStatement) {
+    public static boolean formType(String bookStatement) {
         return bookStatement.endsWith("s");
     }
 
-    public static boolean MapNameToID(String name, String id) {
-        HashMap<String, String> map = GetHashMap();
+    public static String removePlural(String bookStatement) {
+        if (formType(bookStatement)) {
+            bookStatement = bookStatement.substring(0, bookStatement.length()-1);
+        }
+        return bookStatement;
+    }
+
+    public static boolean mapNameToID(EventObject ev) {
+        String name = ev.name;
+        String id = ev.getID();
+
+        if (name == null || id == null) {
+            return false;
+        }
+
+        HashMap<String, String> map = getHashMap();
 
         if (map == null)
             return false;
@@ -52,8 +52,8 @@ public class Tools {
         return true;
     }
 
-    public static String GetIDFromName(String name) {
-        HashMap<String, String> map = GetHashMap();
+    public static String getIdFromName(String name) {
+        HashMap<String, String> map = getHashMap();
 
         if (map == null)
             return null;
@@ -61,7 +61,7 @@ public class Tools {
         return map.get(name);
     }
 
-    private static HashMap<String, String> GetHashMap() {
+    public static HashMap<String, String> getHashMap() {
         HashMap<String, String> map;
 
         try {
@@ -79,6 +79,63 @@ public class Tools {
         }
 
         return map;
+    }
+
+    public static List<HashMap<String, String>> PrettifyItemList(List<Event> items) {
+        DateFormatter dateFormatter = new DateFormatter();
+        try {
+            List<HashMap<String, String>> events = new ArrayList<>();
+            for (Event event : items) {
+                String[] startInfo = event.getStart().getDateTime().toString().split("T|\\.");
+                String[] endInfo = event.getEnd().getDateTime().toString().split("T|\\.");
+                String[] bookAndName = event.getSummary().split("->");
+
+                HashMap<String, String> hm = new HashMap<>();
+                hm.put(Constants.DATE, startInfo[0]);
+                hm.put(Constants.START_TIME, startInfo[1]);
+                hm.put(Constants.END_DATE, startInfo[0]);
+                hm.put(Constants.END_TIME, endInfo[1]);
+                hm.put(Constants.DURATION, dateFormatter.addTime(endInfo[1], "-" + startInfo[1]));
+                hm.put(Constants.BOOK_STATEMENT, bookAndName[0]);
+                hm.put(Constants.NAME, bookAndName[1]);
+
+                events.add(hm);
+            }
+            return events;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static HashMap<String, ArrayList<String>> createTimeContextList() {
+        HashMap<String, ArrayList<String>> TimeOfDay = new HashMap<>();
+
+        ArrayList<String> morning = new ArrayList<>();
+        morning.add(0, "06:00:00");
+        morning.add(1, "12:00:00");
+
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[0], morning);
+
+        ArrayList<String> afternoon = new ArrayList<>();
+        afternoon.add(0, "12:00:00");
+        afternoon.add(1, "18:00:00");
+
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[1], afternoon);
+
+        ArrayList<String> evening = new ArrayList<>();
+        afternoon.add(0, "18:00:00");
+        afternoon.add(1, "22:00:00");
+
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[2], evening);
+
+        ArrayList<String> night = new ArrayList<>();
+        afternoon.add(0, "22:00:00");
+        afternoon.add(1, "06:00:00");
+
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[3], night);
+
+        return TimeOfDay;
     }
 
     public static HashMap<String, String> createTO24HOUR() {
