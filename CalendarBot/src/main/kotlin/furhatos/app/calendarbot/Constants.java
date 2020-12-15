@@ -36,6 +36,14 @@ public class Constants {
 
     public static final String DONE = "DONE";
 
+    public static final String PRONOUNCE = "PRO";
+
+    public static final String TIMEORCONTEXT = "TOC";
+
+    public static final String YES = "YES";
+
+    public static final String NO = "NO";
+
     public static final String[] DAYS = {
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
     };
@@ -55,7 +63,9 @@ public class Constants {
 
     public static final HashMap<String, ArrayList<String>> TimeOfDay = Tools.createTimeContextList();
 
-    public static final HashMap<String, String> TO24HOUR = Tools.createTO24HOUR();
+    public static final HashMap<String, String> TO24HOUR = Tools.create24HourMapping(true);
+
+    public static final HashMap<String, String> FROM24HOUR = Tools.create24HourMapping(false);
 
     public static final String HASHMAP_PATH = "src/main/kotlin/furhatos/app/calendarbot/data/hashmap.ser";
 

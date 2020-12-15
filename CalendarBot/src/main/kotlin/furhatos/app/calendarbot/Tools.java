@@ -81,6 +81,29 @@ public class Tools {
         return map;
     }
 
+    public static String interOptions(String statement, String option) {
+        String sendBack = "";
+        switch (option) {
+            case Constants.PRONOUNCE:
+                if (statement.toLowerCase().startsWith("a") || statement.toLowerCase().startsWith("e")) {
+                    sendBack = "an";
+                } else {
+                    sendBack =  "a";
+                }
+                break;
+            case Constants.TIMEORCONTEXT:
+                for (String timeofday : Constants.TIMESOFTHEDAY) {
+                    if (statement.toLowerCase().contains(timeofday.toLowerCase())) {
+                        sendBack = Constants.YES;
+                    }
+                }
+                if (!sendBack.equals(Constants.YES)) {
+                    sendBack = Constants.NO;
+                }
+        }
+        return sendBack;
+    }
+
     public static List<HashMap<String, String>> PrettifyItemList(List<Event> items) {
         DateFormatter dateFormatter = new DateFormatter();
         try {
@@ -115,39 +138,48 @@ public class Tools {
         morning.add(0, "06:00:00");
         morning.add(1, "12:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[0], morning);
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[0].toLowerCase(), morning);
 
         ArrayList<String> afternoon = new ArrayList<>();
         afternoon.add(0, "12:00:00");
         afternoon.add(1, "18:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[1], afternoon);
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[1].toLowerCase(), afternoon);
 
         ArrayList<String> evening = new ArrayList<>();
-        afternoon.add(0, "18:00:00");
-        afternoon.add(1, "22:00:00");
+        evening.add(0, "18:00:00");
+        evening.add(1, "22:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[2], evening);
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[2].toLowerCase(), evening);
 
         ArrayList<String> night = new ArrayList<>();
-        afternoon.add(0, "22:00:00");
-        afternoon.add(1, "06:00:00");
+        night.add(0, "22:00:00");
+        night.add(1, "06:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[3], night);
+        TimeOfDay.put(Constants.TIMESOFTHEDAY[3].toLowerCase(), night);
 
         return TimeOfDay;
     }
 
-    public static HashMap<String, String> createTO24HOUR() {
+    public static HashMap<String, String> create24HourMapping(boolean returnTo) {
         HashMap<String, String> to24hour = new HashMap<>();
+        HashMap<String, String> from24hour = new HashMap<>();
+
         to24hour.put("12 am", "00:00:00");
+        from24hour.put("00:00:00", "12 am");
         for (int i = 1; i < 10; i++) {
             String non_mil = i + " am";
             String mil = "0" + i + ":00:00";
             to24hour.put(non_mil, mil);
+            from24hour.put(mil, non_mil);
         }
         to24hour.put("10 am", "10:00:00");
         to24hour.put("11 am", "11:00:00");
+        to24hour.put("12 pm", "12:00:00");
+
+        from24hour.put("10:00:00", "10 am");
+        from24hour.put("11:00:00", "11 am");
+        from24hour.put("12:00:00", "12 pm");
         for (int i = 1; i < 12; i++) {
             String non_mil = i + " pm";
             String mil;
@@ -156,6 +188,7 @@ public class Tools {
             else
                 mil = "2" + (i%8) + ":00:00";
             to24hour.put(non_mil, mil);
+            from24hour.put(mil, non_mil);
         }
 
         to24hour.put("1 minute", "00:01:00");
@@ -180,7 +213,10 @@ public class Tools {
             to24hour.put(sentence, mil);
         }
 
-        return to24hour;
+        if (returnTo)
+            return to24hour;
+        else
+            return from24hour;
     }
 
     public static String wordToNumber(String word) {

@@ -5,17 +5,17 @@ import furhatos.nlu.common.*
 import furhatos.flow.kotlin.*
 import furhatos.app.calendarbot.nlu.*
 
-var ev = EventObject()
 var calendar = GoogleCalendar()
 
 val Start : State = state(Interaction) {
 
     onEntry {
-        furhat.ask("")
+        furhat.ask("", timeout=60000)
         //It may be better to just wait for a statement instead of asking nothing and getting a response
     }
 
     onResponse<Add>{
+        var ev = EventObject()
         ev.intent = Constants.ADD_INTENT
         //We must be able to send it to other states, worst case this doesn't have to be implemented
         val startTime = it.intent.startTime
@@ -86,6 +86,7 @@ val Start : State = state(Interaction) {
     }
 
     onResponse<Remove>{
+        var ev = EventObject()
         ev.intent = Constants.REMOVE_INTENT
         val startTime = it.intent.startTime
         val date = it.intent.date
@@ -101,7 +102,7 @@ val Start : State = state(Interaction) {
 
         if (name != null) { // This can only be valid once name is fixed, as well as the methods in Tools
             //Fetch id from stored mapping (HashMap<Name, ID>)
-            var id = "" //TODO: TEMPORARY VARIABLE
+            var id = Tools.getIdFromName(name.toString())
             ev.id = id
         } else {
             if (date != null) {
@@ -136,6 +137,7 @@ val Start : State = state(Interaction) {
     }
 
     onResponse<ListEv> {
+        var ev = EventObject()
         val startTime = it.intent.startTime
         val startDate = it.intent.startDate
         val endDate = it.intent.endDate
@@ -150,27 +152,38 @@ val Start : State = state(Interaction) {
         System.out.println("bookStatement ends with s?: " + Tools.formType(bookStatement.toString()))
         System.out.println("------------------------------------")
 
+        var listedEvents = false
+
         if (Tools.formType(bookStatement.toString())) {
             ev.intent = Constants.LIST_INTENT
             if (endDate == null) {
-                var specificDate = ev.setDate(startDate?.toText())
+                ev.setDate(startDate?.toText())
                 if (startTime == null) {
                     var events = calendar.ListEvents(ev)
-                    if (specificDate) {
-                        furhat.say{"on the " + startDate.toString() + " you have"}
-                    } else {
-                        furhat.say{startDate.toString() + " you have"}
+                    if (events == null || events.size <= 0) {
+                        furhat.say("You do not have anything coming up " + startDate.toString().toLowerCase())
+                        goto(Restart)
                     }
+                    furhat.say(startDate.toString() + " you have")
+
                     for(event in events) {
-                        //furhat.say{event.get(Constants.)}
+                        furhat.say(
+                            Tools.interOptions(event.get(Constants.BOOK_STATEMENT), Constants.PRONOUNCE) + " " +
+                                    event.get(Constants.BOOK_STATEMENT)?.toLowerCase() + " at " +
+                                    Constants.FROM24HOUR.get(event.get(Constants.START_TIME)) + " called " + event.get(Constants.NAME)
+                        )
                     }
-                    // List all events on that day
-                } else {
+                    listedEvents = true
+                } else if (Tools.interOptions(startTime.toString(), Constants.TIMEORCONTEXT) == Constants.YES) {
                     // This is probably time context, e.g. afternoon or something,
                     // so display everything in that time bound.
+
+                    listedEvents = true
                 }
             }
-        } else {
+        }
+
+        if (!listedEvents) {
             ev.intent = Constants.GET_INTENT
             if (startDate != null) {
                 ev.setDate(startDate.toText())
@@ -191,8 +204,9 @@ val Start : State = state(Interaction) {
             }
             ev.createID()
 
-
+            // furhat.say procedure..
         }
+
 
 
         goto(Restart)

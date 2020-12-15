@@ -56,6 +56,7 @@ public class EventObject {
         String[] StringBits = date.split(" ");
         String month = null;
         String number = null;
+        String number_month = null;
         boolean specificDate = false;
         for(int i = 0; i < StringBits.length; i++) {
             if (number == null) {
@@ -74,14 +75,18 @@ public class EventObject {
             }
             if (number != null && month != null) {
                 specificDate = true;
+                number_month = number + " " + month;
                 break;
             }
         }
 
-        String number_month = number + " " + month;
-
         try {
-            this.date = Formatter.getDate(number_month);
+            if (number_month == null) {
+                System.out.println(date);
+                this.date = Formatter.format(date);
+            } else {
+                this.date = Formatter.getDate(number_month);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
