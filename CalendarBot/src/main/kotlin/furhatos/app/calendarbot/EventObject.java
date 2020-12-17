@@ -5,7 +5,7 @@ import java.text.ParseException;
 public class EventObject {
     public String intent = null;
 
-    //For adding
+    // For adding
     public String day = null;
     public String date = null;
     public String dayContext = null;
@@ -22,10 +22,12 @@ public class EventObject {
 
     // For listing
     public String dateTo = null;
+    public String dayTo = null;
 
-    //For interaction
+    // For interaction
     public String bookStatement = null;
 
+    // For formatting dates
     public DateFormatter Formatter;
 
     public EventObject() {
@@ -52,12 +54,13 @@ public class EventObject {
         return Constants.DATE;
     }
 
-    public boolean setDate(String date) {
+    public boolean setDate(String date, boolean startDate) {
         String[] StringBits = date.split(" ");
         String month = null;
         String number = null;
         String number_month = null;
         boolean specificDate = false;
+
         for(int i = 0; i < StringBits.length; i++) {
             if (number == null) {
                 if (StringBits[i].matches("-?\\d+th") ||
@@ -82,18 +85,27 @@ public class EventObject {
 
         try {
             if (number_month == null) {
-                this.date = Formatter.format(date);
+                if (startDate)
+                    this.date = Formatter.format(date);
+                else
+                    this.dateTo = Formatter.format(date);
             } else {
-                this.date = Formatter.getDate(number_month);
+                if (startDate)
+                    this.date = Formatter.getDate(number_month);
+                else
+                    this.dateTo = Formatter.getDate(number_month);
             }
-            this.day = date.toLowerCase();
+            if (startDate)
+                this.day = date.toLowerCase();
+            else
+                this.dayTo = date.toLowerCase();
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return specificDate;
     }
 
-    public void setTime(String time, String startOrEnd) {
+    public boolean setTime(String time, String startOrEnd) {
         /*
             Sets both the start time and end time in military time
             depending on the second argument input.
@@ -101,6 +113,7 @@ public class EventObject {
         String[] StringBits = time.split(" ");
         String number = null;
         String amORpm = null;
+        boolean timeContext = false;
         for(int i = 0; i < StringBits.length; i++) {
             if (amORpm == null) {
                 if (StringBits[i].equalsIgnoreCase("m")) {
@@ -121,11 +134,24 @@ public class EventObject {
                 break;
 
         }
-        String toMilitary = Constants.TO24HOUR.get(number + " " + amORpm);
-        if (startOrEnd.equalsIgnoreCase(Constants.START_TIME))
-            this.startTime = toMilitary;
-        else if (startOrEnd.equalsIgnoreCase(Constants.END_TIME))
-            this.endTime = toMilitary;
+
+        if (number == null && amORpm == null) {
+            for (int i = 0; i < StringBits.length; i++) {
+                for (int j = 0; j < Constants.TIMES_OF_THE_DAY.length; j++)
+                    if (StringBits[i].equalsIgnoreCase(Constants.TIMES_OF_THE_DAY[j])) {
+                        timeContext = true;
+                        this.timeContext = time.toLowerCase();
+                    }
+            }
+        } else {
+            String toMilitary = Constants.TO24HOUR.get(number + " " + amORpm);
+            if (startOrEnd.equalsIgnoreCase(Constants.START_TIME))
+                this.startTime = toMilitary;
+            else if (startOrEnd.equalsIgnoreCase(Constants.END_TIME))
+                this.endTime = toMilitary;
+        }
+
+        return timeContext;
     }
 
     public void setDuration(String duration) {
@@ -168,8 +194,8 @@ public class EventObject {
         String[] StringBits = timeofday.split(" ");
         for(int i = 0; i < StringBits.length; i++) {
             if (this.timeContext == null) {
-                for (int j = 0; j < Constants.TIMESOFTHEDAY.length; j++) {
-                    if (StringBits[i].equalsIgnoreCase(Constants.TIMESOFTHEDAY[j])) {
+                for (int j = 0; j < Constants.TIMES_OF_THE_DAY.length; j++) {
+                    if (StringBits[i].equalsIgnoreCase(Constants.TIMES_OF_THE_DAY[j])) {
                         this.timeContext = StringBits[i];
                     }
                 }
@@ -181,33 +207,6 @@ public class EventObject {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setDayContext(String dayContext) {
-        String[] StringBits = dayContext.split(" ");
-        String number = null;
-        String timeOfDay = null;
-        for(int i = 0; i < StringBits.length; i++) {
-            if (number == null) {
-                String numFound = Tools.wordToNumber(StringBits[i]);
-                if (numFound.equalsIgnoreCase("0"))
-                    continue;
-
-                number = numFound;
-            }
-
-            if (timeOfDay == null)
-                for (int j = 0; j < Constants.TIMES.length; j++)
-                    if (StringBits[i].equalsIgnoreCase(Constants.TIMESOFTHEDAY[j]))
-                        timeOfDay = StringBits[i];
-
-
-            if (number != null && timeOfDay != null)
-                break;
-
-        }
-
-        this.dayContext = number + " " + timeOfDay;
     }
 
     public boolean createID() {

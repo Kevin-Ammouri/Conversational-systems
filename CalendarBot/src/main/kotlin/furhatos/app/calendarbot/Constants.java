@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Constants {
+
+    /** POSSIBLE INTENTS */
+
     public static final String ADD_INTENT = "ADD";
 
     public static final String REMOVE_INTENT = "REMOVE";
@@ -11,6 +14,8 @@ public class Constants {
     public static final String LIST_INTENT = "LIST";
 
     public static final String GET_INTENT = "GET";
+
+    /** KEY CONSTANTS */
 
     public static final String DAY = "DAY";
 
@@ -36,17 +41,25 @@ public class Constants {
 
     public static final String DONE = "DONE";
 
+    public static final String TODAY = "today";
+
+    /** Booking Statements */
+
+    public static final String MEETING = "meeting";
+
+    /** INTERACTION OPTIONS WITH TOOLS */
+
     public static final String PRONOUNCE = "PRO";
 
-    public static final String TIMEORCONTEXT = "TOC";
+    public static final String TIME_OR_CONTEXT = "TOC";
+
+    public static final String REMOVE_PLURAL = "RP";
 
     public static final String YES = "YES";
 
     public static final String NO = "NO";
 
-    public static final String[] DAYS = {
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-    };
+    /** ARRAY CONSTANTS */
 
     public static final String[] MONTHS = {
             "January", "February", "March", "April", "May", "June", "July",
@@ -57,15 +70,20 @@ public class Constants {
             "Second", "Seconds", "Minute", "Minutes", "Hour", "Hours"
     };
 
-    public static final String[] TIMESOFTHEDAY = {
+    public static final String[] TIMES_OF_THE_DAY = {
             "Morning", "Afternoon", "Evening", "Night"
     };
+
+    /** MAPPINGS */
 
     public static final HashMap<String, ArrayList<String>> TimeOfDay = Tools.createTimeContextList();
 
     public static final HashMap<String, String> TO24HOUR = Tools.create24HourMapping(true);
 
     public static final HashMap<String, String> FROM24HOUR = Tools.create24HourMapping(false);
+
+
+    /** PATHS */
 
     public static final String HASHMAP_PATH = "src/main/kotlin/furhatos/app/calendarbot/data/hashmap.ser";
 

@@ -1,11 +1,8 @@
 package furhatos.app.calendarbot;
 
-import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 
 import java.io.*;
-import java.security.GeneralSecurityException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +10,6 @@ import java.util.List;
 public class Tools {
     public static boolean formType(String bookStatement) {
         return bookStatement.endsWith("s");
-    }
-
-    public static String removePlural(String bookStatement) {
-        if (formType(bookStatement)) {
-            bookStatement = bookStatement.substring(0, bookStatement.length()-1);
-        }
-        return bookStatement;
     }
 
     public static boolean mapNameToID(EventObject ev) {
@@ -91,8 +81,10 @@ public class Tools {
                     sendBack =  "a";
                 }
                 break;
-            case Constants.TIMEORCONTEXT:
-                for (String timeofday : Constants.TIMESOFTHEDAY) {
+
+
+            case Constants.TIME_OR_CONTEXT:
+                for (String timeofday : Constants.TIMES_OF_THE_DAY) {
                     if (statement.toLowerCase().contains(timeofday.toLowerCase())) {
                         sendBack = Constants.YES;
                     }
@@ -100,6 +92,14 @@ public class Tools {
                 if (!sendBack.equals(Constants.YES)) {
                     sendBack = Constants.NO;
                 }
+                break;
+
+            case Constants.REMOVE_PLURAL:
+                if (formType(statement)) {
+                    statement = statement.substring(0, statement.length()-1);
+                }
+                return statement;
+
         }
         return sendBack;
     }
@@ -138,25 +138,25 @@ public class Tools {
         morning.add(0, "06:00:00");
         morning.add(1, "12:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[0].toLowerCase(), morning);
+        TimeOfDay.put(Constants.TIMES_OF_THE_DAY[0].toLowerCase(), morning);
 
         ArrayList<String> afternoon = new ArrayList<>();
         afternoon.add(0, "12:00:00");
         afternoon.add(1, "18:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[1].toLowerCase(), afternoon);
+        TimeOfDay.put(Constants.TIMES_OF_THE_DAY[1].toLowerCase(), afternoon);
 
         ArrayList<String> evening = new ArrayList<>();
         evening.add(0, "18:00:00");
         evening.add(1, "22:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[2].toLowerCase(), evening);
+        TimeOfDay.put(Constants.TIMES_OF_THE_DAY[2].toLowerCase(), evening);
 
         ArrayList<String> night = new ArrayList<>();
         night.add(0, "22:00:00");
         night.add(1, "06:00:00");
 
-        TimeOfDay.put(Constants.TIMESOFTHEDAY[3].toLowerCase(), night);
+        TimeOfDay.put(Constants.TIMES_OF_THE_DAY[3].toLowerCase(), night);
 
         return TimeOfDay;
     }
@@ -203,6 +203,7 @@ public class Tools {
         }
 
         to24hour.put("1 hour", "01:00:00");
+        to24hour.put("01:00:00", "1 hour");
         for (int i = 2; i <= 23; i++) {
             String sentence = i + " hours";
             String mil;
@@ -211,6 +212,7 @@ public class Tools {
             else
                 mil = i + ":00:00";
             to24hour.put(sentence, mil);
+            to24hour.put(mil, sentence);
         }
 
         if (returnTo)

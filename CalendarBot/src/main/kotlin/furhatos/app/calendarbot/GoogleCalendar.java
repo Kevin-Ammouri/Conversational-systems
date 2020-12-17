@@ -34,10 +34,6 @@ public class GoogleCalendar {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
-    /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved tokens/ folder.
-     */
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
@@ -49,12 +45,6 @@ public class GoogleCalendar {
                 .build();
     }
 
-    /**
-     * Creates an authorized Credential object.
-     * @param HTTP_TRANSPORT The network HTTP Transport.
-     * @return An authorized Credential object.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = GoogleCalendar.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -73,13 +63,7 @@ public class GoogleCalendar {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    /**
-     * Method for inserting a given EventObject into the google Calendar.
-     * @param ev, The event object that is generated from furhat to be inserted .
-     * @return An string with information if the insert was successful or not.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
-    public String InsertEvent(EventObject ev) {
+    public boolean insertEvent(EventObject ev) {
         try {
             String startTime = ev.date + "T" + ev.startTime + "+02:00";
             String endTime = ev.date + "T" + ev.endTime + "+02:00";
@@ -105,38 +89,22 @@ public class GoogleCalendar {
             String calendarId = "primary";
             event = service.events().insert(calendarId, event).execute();
 
-            return "Successfully inserted event.";
+            return true;
         }catch (Exception e) {
             e.printStackTrace();
-            return "Unsuccessful of inserting the event";
+            return false;
         }
     }
 
-    /**
-     * Method for removing a given EventObject from the google Calendar.
-     * @param ev, The event object that is generated from furhat to be deleted.
-     * @return An string with information if the remove was successful or not.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
-    public String RemoveEvent(EventObject ev) {
+    public boolean removeEvent(EventObject ev) {
         try {
-            // Delete an event
             service.events().delete("primary", ev.getID()).execute();
-            System.out.printf("EventObject Successfully removed: %s\n", ev.getID());
-
-            return "Successfully remove event.";
+            return true;
         } catch (Exception e){
-            System.out.printf("EventObject could not be removed %s\n", ev.getID());
-            return "Successfully remove event.";
+            return false;
         }
     }
 
-    /**
-     * Method for getting an EventObject in a google Calendar.
-     * @param ev, The event object that is generated from furhat to be listed.
-     * @return An EventObject from google calendar api.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
     public List<HashMap<String, String>> getEvent(EventObject ev) {
         try {
             Event event;
@@ -155,13 +123,7 @@ public class GoogleCalendar {
 
     }
 
-    /**
-     * Method for listing EventObject in a google Calendar.
-     * @param ev, The event object that is generated from furhat to be deleted.
-     * @return An string with information if the remove was successful or not.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
-    public List<HashMap<String, String>> ListEvents(EventObject ev) {
+    public List<HashMap<String, String>> listEvents(EventObject ev) {
         try {
             Events events;
             DateTime nowEnd;

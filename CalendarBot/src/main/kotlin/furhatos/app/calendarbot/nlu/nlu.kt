@@ -63,7 +63,7 @@ class RemoveStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
 
 class AddStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("Schedule", "Book")
+        return listOf("Schedule", "Book", "Put")
     }
 }
 
@@ -100,7 +100,6 @@ class Name (var name : String? = null) : ComplexEnumEntity() {
     override fun toText(): String {
         return generate("$name")
     }
-
 }
 
 class DayContext (
