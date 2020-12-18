@@ -26,6 +26,9 @@ public class EventObject {
 
     // For interaction
     public String bookStatement = null;
+    public String addStatement = null;
+    public String removeStatement = null;
+    public String listStatement = null;
 
     // For formatting dates
     public DateFormatter Formatter;
@@ -35,23 +38,58 @@ public class EventObject {
     }
 
     public String nextUnfilled() {
-        if (day != null || date != null) {
-            if (startTime != null && endTime != null) {
-                if (name != null) {
-                    return Constants.DONE;
-                } else {
-                    return Constants.NAME;
+        switch(this.intent) {
+            case Constants.ADD_INTENT:
+                if (day != null && date != null) {
+                    if (startTime != null && endTime != null) {
+                        if (name != null) {
+                            return Constants.DONE;
+                        } else {
+                            return Constants.NAME;
+                        }
+                    } else if (startTime != null && endTime == null) {
+                        return Constants.DURATION;
+                    } else if (startTime == null && (endTime != null || duration != null)) {
+                        return Constants.START_TIME;
+                    } else if (startTime == null && endTime == null && duration == null) {
+                        return Constants.START_TIME;
+                    }
                 }
-            } else if (startTime != null && endTime == null) {
-                return Constants.DURATION;
-            } else if (startTime == null && (endTime != null || duration != null)) {
-                return Constants.START_TIME;
-            } else if (startTime == null && endTime == null && duration == null) {
-                return Constants.START_TIME;
-            }
+
+                return Constants.DATE;
+
+            case Constants.REMOVE_INTENT:
+                if (name != null)
+                    return Constants.DONE;
+
+                if (this.date != null && this.startTime == null)
+                    return Constants.LIST_INTENT;
+
+                if (date == null)
+                    return Constants.DATE;
+
+                if (startTime == null)
+                    return Constants.START_TIME;
+
+                return Constants.DONE;
+
+            case Constants.LIST_INTENT:
+                if (this.date == null)
+                    return Constants.DATE;
+
+                return Constants.DONE;
+
+            case Constants.GET_INTENT:
+                if (this.date == null)
+                    return Constants.DATE;
+
+                if (this.startTime == null)
+                    return Constants.START_TIME;
+
+                return Constants.DONE;
         }
 
-        return Constants.DATE;
+        return null;
     }
 
     public boolean setDate(String date, boolean startDate) {
@@ -95,13 +133,28 @@ public class EventObject {
                 else
                     this.dateTo = Formatter.getDate(number_month);
             }
-            if (startDate)
-                this.day = date.toLowerCase();
-            else
-                this.dayTo = date.toLowerCase();
+            if (startDate) {
+                if (date.contains("null")) {
+                    this.day = date.toLowerCase().replace("null", "");
+                } else {
+                    this.day = date.toLowerCase();
+                }
+            }
+            else {
+                if (date.contains("null")) {
+                    this.dayTo = date.toLowerCase().replace("null", "");
+                } else {
+                    this.dayTo = date.toLowerCase();
+                }
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        if (this.startTime != null && this.date != null) {
+            this.createID();
+        }
+
         return specificDate;
     }
 
@@ -149,6 +202,18 @@ public class EventObject {
                 this.startTime = toMilitary;
             else if (startOrEnd.equalsIgnoreCase(Constants.END_TIME))
                 this.endTime = toMilitary;
+        }
+
+        if (this.startTime != null && this.endTime != null && this.duration == null) {
+            try {
+                this.duration = Formatter.addTime(this.endTime, "-" + this.startTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (this.startTime != null && this.date != null) {
+            this.createID();
         }
 
         return timeContext;
@@ -207,6 +272,8 @@ public class EventObject {
 
     public void setName(String name) {
         this.name = name;
+        String id = Tools.getIdFromName(name);
+        this.ID = id;
     }
 
     public boolean createID() {

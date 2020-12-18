@@ -19,6 +19,9 @@ class Add(var date : Date? = null,
     override fun getExamples(lang: Language): List<String> {
         return listOf(
                 "@addStatement @bookStatement",
+                "@addStatement @bookStatement @date",
+                "@addStatement @bookStatement @duration",
+                "@addStatement @bookStatement @name",
                 "@addStatement @bookStatement @startTime @endTime")
     }
 }
@@ -36,14 +39,12 @@ class Remove(var removeStatement: RemoveStatement? = null,
 
 class ListEv(var listStatement: ListStatement? = null,
              var bookStatement: BookingStatement? = null,
-             var startDate : Date? = null,
-             var endDate : Date? = null,
+             var date : Date? = null,
              var startTime : Time? = null,
              var dayContext : DayContext? = null) : Intent() {
     override fun getExamples(lang: Language): List<String> {
         return listOf(
-                "@listStatement @bookStatement",
-                "@listStatement @bookStatement @startDate @endDate")
+                "@listStatement @bookStatement")
     }
 }
 

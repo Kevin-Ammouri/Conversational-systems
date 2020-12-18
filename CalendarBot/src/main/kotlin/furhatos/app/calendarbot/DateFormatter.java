@@ -19,6 +19,9 @@ public class DateFormatter {
     }
 
     public String format(String s) throws ParseException {
+        if (s == null) {
+            s = "";
+        }
         Calendar cal = Calendar.getInstance();
         Date curr = cal.getTime();
         String[] DaysOfWeek = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
@@ -46,7 +49,7 @@ public class DateFormatter {
                     break;
                 }
             }
-            int weekToAdd = Integer.parseInt(tmpArr[idx-1]) * 7;
+            int weekToAdd = Integer.parseInt(Tools.wordToNumber(tmpArr[idx-1])) * 7;
             if (weekToAdd < 10) {
                 DateToAdd = "0000-00-0" + weekToAdd;
             } else {
@@ -62,7 +65,7 @@ public class DateFormatter {
                     break;
                 }
             }
-            int monthToAdd = Integer.parseInt(tmpArr[idx-1]);
+            int monthToAdd = Integer.parseInt(Tools.wordToNumber(tmpArr[idx-1]));
             if (monthToAdd < 10) {
                 DateToAdd = "0000-0" + monthToAdd + "-00";
             } else {
@@ -77,7 +80,7 @@ public class DateFormatter {
                     break;
                 }
             }
-            int dayToAdd = Integer.parseInt(tmpArr[idx-1]);
+            int dayToAdd = Integer.parseInt(Tools.wordToNumber(tmpArr[idx-1]));
             if (dayToAdd < 10) {
                 DateToAdd = "0000-00-0" + dayToAdd;
             } else {
