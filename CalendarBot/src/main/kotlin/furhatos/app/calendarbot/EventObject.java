@@ -5,7 +5,7 @@ import java.text.ParseException;
 public class EventObject {
     public String intent = null;
 
-    // For adding
+    /** For adding */
     public String day = null;
     public String date = null;
     public String dayContext = null;
@@ -17,20 +17,23 @@ public class EventObject {
 
     public String name = null;
 
-    // For removing
+    /** For removing */
     private String ID = null;
 
-    // For listing
+    /** For listing */
     public String dateTo = null;
     public String dayTo = null;
 
-    // For interaction
+    /** For interaction */
     public String bookStatement = null;
     public String addStatement = null;
     public String removeStatement = null;
     public String listStatement = null;
 
-    // For formatting dates
+    /** For seeing current status */
+    public String status = Constants.PENDING;
+
+    /** For formatting dates */
     public DateFormatter Formatter;
 
     public EventObject() {
@@ -41,8 +44,14 @@ public class EventObject {
         switch(this.intent) {
             case Constants.ADD_INTENT:
                 if (day != null && date != null) {
+                    if (timeContext != null && duration != null) {
+                        return Constants.BE_PROACTIVE;
+                    } else if (timeContext != null && duration == null) {
+                        return Constants.DURATION;
+                    }
+
                     if (startTime != null && endTime != null) {
-                        if (name != null) {
+                        if (name != null && name != "null") {
                             return Constants.DONE;
                         } else {
                             return Constants.NAME;
@@ -92,7 +101,7 @@ public class EventObject {
         return null;
     }
 
-    public boolean setDate(String date, boolean startDate) {
+    public boolean setDate(String date) {
         String[] StringBits = date.split(" ");
         String month = null;
         String number = null;
@@ -123,30 +132,17 @@ public class EventObject {
 
         try {
             if (number_month == null) {
-                if (startDate)
-                    this.date = Formatter.format(date);
-                else
-                    this.dateTo = Formatter.format(date);
+                this.date = Formatter.format(date);
             } else {
-                if (startDate)
-                    this.date = Formatter.getDate(number_month);
-                else
-                    this.dateTo = Formatter.getDate(number_month);
+                this.date = Formatter.getDate(number_month);
             }
-            if (startDate) {
-                if (date.contains("null")) {
-                    this.day = date.toLowerCase().replace("null", "");
-                } else {
-                    this.day = date.toLowerCase();
-                }
+
+            if (date.contains("null")) {
+                this.day = date.toLowerCase().replace("null", "");
+            } else {
+                this.day = date.toLowerCase();
             }
-            else {
-                if (date.contains("null")) {
-                    this.dayTo = date.toLowerCase().replace("null", "");
-                } else {
-                    this.dayTo = date.toLowerCase();
-                }
-            }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }

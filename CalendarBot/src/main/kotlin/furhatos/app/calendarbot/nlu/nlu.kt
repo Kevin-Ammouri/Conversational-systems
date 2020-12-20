@@ -6,14 +6,15 @@ import furhatos.nlu.Intent
 import furhatos.nlu.common.Date
 import furhatos.util.Language
 import furhatos.nlu.common.Number
+import furhatos.nlu.common.PersonName
 import furhatos.nlu.common.Time
 
 class Add(var date : Date? = null,
           var startTime : Time? = null,
           var endTime : Time? = null,
           var duration : Duration? = null,
+          var name : PersonName? = null,
           var dayContext : DayContext? = null,
-          var name : Name? = null,
           var addStatement: AddStatement? = null,
           var bookStatement : BookingStatement? = null): Intent() {
     override fun getExamples(lang: Language): List<String> {
@@ -21,7 +22,6 @@ class Add(var date : Date? = null,
                 "@addStatement @bookStatement",
                 "@addStatement @bookStatement @date",
                 "@addStatement @bookStatement @duration",
-                "@addStatement @bookStatement @name",
                 "@addStatement @bookStatement @startTime @endTime")
     }
 }
@@ -30,10 +30,14 @@ class Remove(var removeStatement: RemoveStatement? = null,
              var bookStatement: BookingStatement? = null,
              var date : Date? = null,
              var startTime : Time? = null,
-             var dayContext : DayContext? = null,
-             var name : Name? = null) : Intent() {
+             var name : PersonName? = null,
+             var dayContext : DayContext? = null) : Intent() {
     override fun getExamples(lang: Language): List<String> {
-        return listOf("@removeStatement @bookStatement")
+        return listOf(
+                "@removeStatement @bookStatement",
+                "@removeStatement @bookStatement @date",
+                "@removeStatement @bookStatement @startTime",
+                "@removeStatement @bookStatement @name")
     }
 }
 
@@ -44,15 +48,25 @@ class ListEv(var listStatement: ListStatement? = null,
              var dayContext : DayContext? = null) : Intent() {
     override fun getExamples(lang: Language): List<String> {
         return listOf(
-                "@listStatement @bookStatement")
+                "@listStatement @bookStatement",
+                "@listStatement @bookStatement @date",
+                "@listStatement @bookStatement @startTime")
     }
 }
 
-class DateAndDayContext(var date: Date? = null, var dayContext: DayContext? = null) : ComplexEnumEntity()
+class InfoIntent(
+        var date : Date? = null,
+        var time : Time? = null,
+        var duration : Duration? = null,
+        var name : PersonName? = null) : Intent() {
+    override fun getExamples(lang: Language): List<String> {
+        return listOf("@date", "@time", "@duration", "@name", "@time @duration")
+    }
+}
 
 class ListStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("List", "Show", "Name", "Specify", "Tell", "Say")
+        return listOf("List", "Show", "Specify", "Tell", "Say", "Do")
     }
 }
 
@@ -64,7 +78,7 @@ class RemoveStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
 
 class AddStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("Schedule", "Book", "Put")
+        return listOf("Schedule", "Book", "Put", "Add")
     }
 }
 
@@ -90,16 +104,6 @@ class Duration (
 class Times : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
         return listOf("Second", "Seconds", "Minute", "Minutes", "Hour", "Hours", "-hour")
-    }
-}
-
-class Name (var name : String? = null) : ComplexEnumEntity() {
-    override fun getEnum(lang: Language): List<String> {
-        return listOf("the name is @name", "name the event @name", "call the event @name")
-    }
-
-    override fun toText(): String {
-        return generate("$name")
     }
 }
 

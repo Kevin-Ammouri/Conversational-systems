@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Constants {
 
-    /** POSSIBLE INTENTS */
+    /** Intents */
 
     public static final String ADD_INTENT = "ADD";
 
@@ -15,7 +15,7 @@ public class Constants {
 
     public static final String GET_INTENT = "GET";
 
-    /** KEY CONSTANTS */
+    /** Key Constants */
 
     public static final String DAY = "DAY";
 
@@ -43,11 +43,23 @@ public class Constants {
 
     public static final String TODAY = "today";
 
+    public static final String BE_PROACTIVE = "BE_PROACTIVE";
+
+    /** Status Messages for EventObject */
+
+    public static final String PENDING = "PENDING";
+
+    public static final String SUCCESS = "SUCCESS";
+
+    public static final String FAILED = "FAILED";
+
     /** Booking Statements */
 
     public static final String MEETING = "meeting";
 
-    /** INTERACTION OPTIONS WITH TOOLS */
+    public static final String EVERYTHING = "everything";
+
+    /** Interaction Options with Tools */
 
     public static final String PRONOUNCE = "PRO";
 
@@ -59,7 +71,7 @@ public class Constants {
 
     public static final String NO = "NO";
 
-    /** ARRAY CONSTANTS */
+    /** Array Constants */
 
     public static final String[] MONTHS = {
             "January", "February", "March", "April", "May", "June", "July",
@@ -74,7 +86,7 @@ public class Constants {
             "Morning", "Afternoon", "Evening", "Night"
     };
 
-    /** MAPPINGS */
+    /** Mappings */
 
     public static final HashMap<String, ArrayList<String>> TimeOfDay = Tools.createTimeContextList();
 
@@ -83,7 +95,7 @@ public class Constants {
     public static final HashMap<String, String> FROM24HOUR = Tools.create24HourMapping(false);
 
 
-    /** PATHS */
+    /** Paths */
 
     public static final String HASHMAP_PATH = "src/main/kotlin/furhatos/app/calendarbot/data/hashmap.ser";
 

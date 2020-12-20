@@ -19,9 +19,6 @@ public class DateFormatter {
     }
 
     public String format(String s) throws ParseException {
-        if (s == null) {
-            s = "";
-        }
         Calendar cal = Calendar.getInstance();
         Date curr = cal.getTime();
         String[] DaysOfWeek = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
@@ -49,13 +46,13 @@ public class DateFormatter {
                     break;
                 }
             }
-            int weekToAdd = Integer.parseInt(Tools.wordToNumber(tmpArr[idx-1])) * 7;
+            int weekToAdd = Integer.parseInt(tmpArr[idx-1]) * 7;
             if (weekToAdd < 10) {
                 DateToAdd = "0000-00-0" + weekToAdd;
             } else {
                 DateToAdd = "0000-00-" + weekToAdd;
             }
-
+            fixed = true;
         }
 
         if (!fixed && s.toLowerCase().contains("months")) {
@@ -65,13 +62,13 @@ public class DateFormatter {
                     break;
                 }
             }
-            int monthToAdd = Integer.parseInt(Tools.wordToNumber(tmpArr[idx-1]));
+            int monthToAdd = Integer.parseInt(tmpArr[idx-1]);
             if (monthToAdd < 10) {
                 DateToAdd = "0000-0" + monthToAdd + "-00";
             } else {
                 DateToAdd = "0000-" + monthToAdd + "-00";
             }
-
+            fixed = true;
         }
         if (!fixed && s.toLowerCase().contains("days")) {
             for (int i = 0; i < tmpArr.length; i++) {
@@ -80,13 +77,13 @@ public class DateFormatter {
                     break;
                 }
             }
-            int dayToAdd = Integer.parseInt(Tools.wordToNumber(tmpArr[idx-1]));
+            int dayToAdd = Integer.parseInt(tmpArr[idx-1]);
             if (dayToAdd < 10) {
                 DateToAdd = "0000-00-0" + dayToAdd;
             } else {
                 DateToAdd = "0000-00-" + dayToAdd;
             }
-
+            fixed = true;
         }
 
         //String date = addDate(DateToAdd);
@@ -105,24 +102,26 @@ public class DateFormatter {
                 diff++;
                 CurrDay = LocalDate.now().plusDays(diff).getDayOfWeek();
             }
-            String[] arr = DateToAdd.split("-");
 
-            int years = Integer.parseInt(arr[0]);
-            int months = Integer.parseInt(arr[1]);
-            int days = Integer.parseInt(arr[2]);
-
-            cal.add(Calendar.DAY_OF_MONTH, days);;
-            cal.add(Calendar.MONTH, months);
-            cal.add(Calendar.YEAR, years);
-
-            if (o.getValue() > CurrDay.getValue()){
-                diff -= 7;
-            }
-            cal.add(Calendar.DAY_OF_MONTH, diff);
 
         }
+        String[] arr = DateToAdd.split("-");
+
+        int years = Integer.parseInt(arr[0]);
+        int months = Integer.parseInt(arr[1]);
+        int days = Integer.parseInt(arr[2]);
+
+        cal.add(Calendar.DAY_OF_MONTH, days);;
+        cal.add(Calendar.MONTH, months);
+        cal.add(Calendar.YEAR, years);
+
+        if (o.getValue() > CurrDay.getValue() && fixed){
+            diff -= 7;
+        }
+        cal.add(Calendar.DAY_OF_MONTH, diff);
 
         Date date = cal.getTime();
+
         String strDate = DateFormat.format(date);
 
         //String toReturn = addDate(strDate);
@@ -166,6 +165,33 @@ public class DateFormatter {
 
         Date date = cal.getTime();
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String strDate = dateFormat.format(date);
+
+        cal.setTime(curr);
+        return strDate;
+    }
+
+    public String addDate(String StartDate, String DaysToAdd) throws ParseException {
+        Calendar cal = Calendar.getInstance();
+        Date curr = cal.getTime();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date sDay = df.parse(StartDate);
+
+        cal.setTime(sDay);
+        // Demonstrate Calendar's get()method
+        String[] arr = DaysToAdd.split("-");
+
+        int years = Integer.parseInt(arr[0]);
+        int mounts = Integer.parseInt(arr[1]);
+        int days = Integer.parseInt(arr[2]);
+
+        cal.add(Calendar.YEAR, years);
+        cal.add(Calendar.MONTH, mounts);
+        cal.add(Calendar.DATE, days);
+
+        Date date = cal.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(date);
 
         cal.setTime(curr);

@@ -3,6 +3,7 @@ package furhatos.app.calendarbot;
 import com.google.api.services.calendar.model.Event;
 
 import java.io.*;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -298,5 +299,187 @@ public class Tools {
         finalResult += result;
 
         return Integer.toString(finalResult);
+    }
+
+    public static void printList(ArrayList<AvailableTimes> times) {
+        for (AvailableTimes at : times) {
+            System.out.println("DAY: " + at.day);
+            System.out.println("DATE: " + at.date);
+            System.out.println("AVAILABLE TIMES: " + at.startTimes.toString());
+        }
+    }
+
+    public static ArrayList<ArrayList<String>> availableGaps(EventObject ev, GoogleCalendar calendar, int day)
+            throws ParseException {
+
+        DateFormatter df = new DateFormatter();
+        ev.startTime = null;
+        ev.endTime = null;
+        List<HashMap<String, String>> list;
+
+        ArrayList<ArrayList<String>> availableTimeGaps = new ArrayList<ArrayList<String>>(); // Create an ArrayList object
+        ArrayList<Integer> availableTimeGapsCorrespondingDay = new ArrayList<Integer>(); // Create an ArrayList object
+
+        // Variables used in the for loop to keep track of index and day.
+        int gapCounter = 0;
+
+
+        // Suggest a time slot for the user if only a timeContext is given.
+        if (ev.timeContext != null) {
+            ArrayList<String> time_bounds = Constants.TimeOfDay.get(ev.timeContext);
+            ev.startTime = time_bounds.get(0);
+            ev.endTime = time_bounds.get(1);
+            list = calendar.listEvents(ev);
+        } else {
+            list = calendar.listEvents(ev);
+            ev.startTime = "08:00:00";
+            ev.endTime = "20:00:00";
+        }
+        // If there is no events book between the specific time slots
+        // we return the whole interval.
+        if (list == null || list.isEmpty()) {
+            // Start and end time of the gap
+            ArrayList<String> availableTimeGapToAdd = new ArrayList<String>(); // Create an ArrayList object
+            availableTimeGapToAdd.add(0, ev.startTime);
+            availableTimeGapToAdd.add(1, ev.endTime);
+
+            // Add the gap into the list.
+            availableTimeGaps.add(gapCounter, availableTimeGapToAdd);
+            return availableTimeGaps;
+        }
+
+        String defaultStart = ev.startTime;
+        String defaultEnd = ev.endTime;
+        String duration = ev.duration;
+
+        String checkAvailable = df.addTime(defaultStart, duration);
+        String startTimePrev = list.get(0).get(Constants.START_TIME);
+        String endTimePrev = list.get(0).get(Constants.END_TIME);
+
+        //Get the first base case time gap. if there exist one.
+        if (checkAvailable.compareTo(startTimePrev) <= 0) {
+            // Start and end time of the gap
+            ArrayList<String> availableTimeGapToAdd = new ArrayList<String>(); // Create an ArrayList object
+            availableTimeGapToAdd.add(0, defaultStart);
+            availableTimeGapToAdd.add(1, startTimePrev);
+
+            // Add the gap into the list.
+            availableTimeGaps.add(gapCounter, availableTimeGapToAdd);
+
+            // Corresponding day of the available time gap.
+            availableTimeGapsCorrespondingDay.add(gapCounter, day);
+
+            //Update amount of gaps counter
+            gapCounter += 1;
+        }
+
+        for (HashMap<String, String> event : list.subList(1, list.size())) {
+            checkAvailable = df.addTime(endTimePrev, duration);
+            String starTime = event.get(Constants.START_TIME);
+            String endTime = event.get(Constants.END_TIME);
+
+            //check if the endTime + duration is less than next event startTime.
+            if (checkAvailable.compareTo(starTime) <= 0) {
+                // Start and end time of the gap
+                ArrayList<String> availableTimeGapToAdd = new ArrayList<String>(); // Create an ArrayList object
+                availableTimeGapToAdd.add(0, endTimePrev);
+                availableTimeGapToAdd.add(1, starTime);
+
+                // Add the gap into the list.
+                availableTimeGaps.add(gapCounter, availableTimeGapToAdd);
+
+                // Corresponding day of the available time gap.
+                availableTimeGapsCorrespondingDay.add(gapCounter, day);
+                gapCounter += 1;
+            }
+            startTimePrev = starTime;
+            endTimePrev = endTime;
+        }
+
+        checkAvailable = df.addTime(endTimePrev, duration);
+
+        //Get the last base case time gap. if there exist one.
+        if (checkAvailable.compareTo(defaultEnd) <= 0) {
+            // Start and end time of the gap
+            ArrayList<String> availableTimeGapToAdd = new ArrayList<String>(); // Create an ArrayList object
+            availableTimeGapToAdd.add(0, endTimePrev);
+            availableTimeGapToAdd.add(1, defaultEnd);
+
+            // Add the gap into the list.
+            availableTimeGaps.add(gapCounter, availableTimeGapToAdd);
+
+            // Corresponding day of the available time gap.
+            availableTimeGapsCorrespondingDay.add(gapCounter, day);
+        }
+
+        // Return all available time gaps found for the given time interval.
+        return availableTimeGaps;
+    }
+
+    public static ArrayList<AvailableTimes> findAvailableTime(EventObject ev, int amountOfDaysToSuggest, GoogleCalendar calendar)
+            throws ParseException {
+        // Used in the end to go back to the original date and day in the ev object.
+        String startingDate = ev.date;
+        String startingDay = ev.day;
+
+        // Creating a list with instances of the class AvailableTimes.
+        ArrayList<AvailableTimes> availableTimes = new ArrayList<AvailableTimes>();
+
+        // Creating a instance of the DateFormatter class.
+        DateFormatter df = new DateFormatter();
+
+        for(int i = 0; i < amountOfDaysToSuggest; i++) {
+
+            // Method call to availableGaps to extract all available time gaps that our event could fit into.
+            // Input, a given event and an instance of the google calendar api class.
+            ArrayList<ArrayList<String>> availableGaps = availableGaps(ev, calendar, i);
+            //System.out.println(availableGaps);
+
+            // creating an instance of  availableTime object and the available times array list..
+            AvailableTimes availableTime = new AvailableTimes();
+            ArrayList<String> times = new ArrayList<>();
+            //System.out.println(ev.date);
+            for (ArrayList<String> gap : availableGaps) {
+                String startTime = gap.get(0);
+                String endTime = gap.get(1);
+
+                String checkIfValidTime = df.addTime(startTime, ev.duration);
+                // While start time + duration is less than or equal to end time.
+                // Add new possible time spot for the event to be added into.
+                while (checkIfValidTime.compareTo(endTime) <= 0) {
+                    times.add(startTime);
+                    startTime = df.addTime(startTime, "01:00:00");
+                    checkIfValidTime = df.addTime(startTime, ev.duration);
+                }
+            }
+
+            // System.out.println(times);
+            // System.out.println(ev.day);
+            // System.out.println("--------------------------");
+            // Add all the available times for a specific day into the list that is to be returned.
+            availableTime.startTimes = times;
+            availableTime.date = ev.date;
+            availableTime.day = ev.day;
+
+            // This one is used to avoid problems if today is friday. hence we grep the
+            // day value again using the date.
+            String day = df.WeekDay(ev.date);
+
+            // I believe that this should be the case, but if it is:
+            // Need change if day could be null in any case.
+            // Need to change if MEETING  could be null in any case.
+            if(day.toLowerCase().contains("friday") && ev.bookStatement.equalsIgnoreCase(Constants.MEETING)){
+                ev.date = df.addDate(ev.date,"0000-00-03");
+            }else {
+                ev.date = df.addDate(ev.date, "0000-00-01");
+            }
+            ev.day = "on " + df.WeekDay(ev.date).toLowerCase();
+            availableTimes.add(i, availableTime);
+
+        }
+        // Go back to the original date and day.
+        ev.date = startingDate;
+        ev.day = startingDay;
+        return availableTimes;
     }
 }

@@ -12,7 +12,10 @@ var calendar = GoogleCalendar()
 val Start : State = state(Interaction) {
 
     onEntry {
-        if (ev.intent != null) {
+        println("********************** ev.intent: " + ev.intent + " *** STATUS: " + ev.status)
+        if (ev.intent != null && ev.status == Constants.PENDING) {
+
+            println("INTENT: " + ev.intent)
 
             println("DATE: " + ev.date)
             println("DAY: " + ev.day)
@@ -23,116 +26,133 @@ val Start : State = state(Interaction) {
             println("TIME CONTEXT: " + ev.timeContext)
             println("DURATION: " + ev.duration)
 
+            println("NAME: " + ev.name)
             println("BOOK STATEMENT: " + ev.bookStatement)
             println("bookStatement ends with s?: " + Tools.formType(ev.bookStatement.toString()))
-            println("------------------------------------")
 
             var nextInfo = ev.nextUnfilled()
+            println("NEXT INFO REQUIRED: " + nextInfo)
+            println("------------------------------------")
             if (nextInfo == Constants.DATE) {
                 furhat.ask(random(
-                        "Sure, whicDurah date does this " + ev.bookStatement + " concern?",
+                        "Sure, which date does this " + ev.bookStatement + " concern?",
                         "Okay. Which date?"
-                ))
+                ), timeout = 60000)
             } else if (nextInfo == Constants.DURATION) {
                 furhat.ask(random(
-                        "Sure, how long will the event last?",
-                        "Okay, how long will the event go on for?"
-                ))
+                        "Sure, how long will the " + ev.bookStatement + " last?",
+                        "Okay, how long will the " + ev.bookStatement + " go on for?"
+                ), timeout = 60000)
             } else if (nextInfo == Constants.START_TIME) {
                 furhat.ask(random(
-                        "Sure, when will the event begin?",
-                        "Okay, when does the event start?"
-                ))
+                        "Sure, when will the " + ev.bookStatement + " begin?",
+                        "Okay, when does the " + ev.bookStatement + " start?"
+                ), timeout = 60000)
             } else if (nextInfo == Constants.NAME) {
                 furhat.ask(random(
-                        "Sure, what will you name the event?",
-                        "Okay, what is the name of the event?"
-                ))
+                        "Sure, what will you name the " + ev.bookStatement + "?",
+                        "Okay, what do you want to name the " + ev.bookStatement + "?"
+                ), timeout = 60000)
             } else if (nextInfo == Constants.LIST_INTENT) {
-                call(ListEvents())
-                furhat.ask("Which one do you mean specifically?")
+                call(listEvents())
+                furhat.ask("Which one do you mean specifically?", timeout = 60000)
+            } else if (nextInfo == Constants.BE_PROACTIVE) {
+                call(beProactive())
             } else if (nextInfo == Constants.DONE) {
                 goto(Final)
             }
+        } else if (ev.status == Constants.SUCCESS) {
+            furhat.ask("Anything else?", timeout = 60000)
         } else {
-            furhat.ask("", timeout = 60000)
+            furhat.listen(timeout = 60000)
         }
     }
+
 
     onResponse<Add> {
         println("** Entered ADD")
         ev.intent = Constants.ADD_INTENT
+        ev.status = Constants.PENDING
 
-        call(SetAddParams(it))
+        println("FURHAT CAUGHT DATE: " + it.intent.date.toString())
+        println("FURHAT CAUGHT startTime: " + it.intent.startTime.toString())
+        println("FURHAT CAUGHT endTime: " + it.intent.endTime.toString())
+        println("FURHAT CAUGHT duration: " + it.intent.duration.toString())
+        println("FURHAT CAUGHT daycontext: " + it.intent.dayContext.toString())
+        println("FURHAT CAUGHT name: " + it.intent.name.toString())
 
-        if (ev.timeContext != null && ev.startTime == null) {
-            println("LETS BE PROACTIVE")
-            /** Be proactive, we may need to jump between states with goto (much more efficient) */
-        }
+        call(setAddParams(it))
 
-        goto(Restart)
+        reentry()
     }
 
     onResponse<Remove>{
         println("** Entered REMOVE")
         ev.intent = Constants.REMOVE_INTENT
+        ev.status = Constants.PENDING
 
-        call(SetRemoveParams(it))
+        call(setRemoveParams(it))
 
-        goto(Restart)
+        reentry()
     }
 
     onResponse<ListEv> {
         println("** Entered LIST")
-        call(SetListParams(it))
-
-        if (Tools.formType(ev.bookStatement)) {
+        call(setListParams(it))
+        ev.status = Constants.PENDING
+        if (Tools.formType(ev.bookStatement) || ev.bookStatement.equals(Constants.EVERYTHING)) {
             ev.intent = Constants.LIST_INTENT
         } else {
             ev.intent = Constants.GET_INTENT
         }
 
-        goto(Restart)
+        reentry()
     }
 
-    onResponse<Date> {
-        println("** Entered Date")
-        var date = it.intent
-        ev.setDate(date.toString(), true)
+    onResponse<InfoIntent> {
+        println("** Entered Extra Info State")
+        var date = it.intent.date
+        var time = it.intent.time
+        var duration = it.intent.duration
+        var name = it.intent.name
 
-        goto(Restart)
-    }
+        println("FURHAT CAUGHT DATE: " + it.intent.date.toString())
+        println("FURHAT CAUGHT time: " + it.intent.time.toString())
+        println("FURHAT CAUGHT duration: " + it.intent.duration.toString())
+        println("FURHAT CAUGHT name: " + it.intent.name.toString())
 
-    onResponse<Time> {
-        println("** Entered Time")
-        var time = it.intent
-        ev.setTime(time.toString(), Constants.START_TIME)
+        if (date != null) { ev.setDate(date.toString()) }
 
-        goto(Restart)
-    }
+        if (time != null) { ev.setTime(time.toString(), Constants.START_TIME) }
 
-    onResponse<Duration> {
-        println("** Entered Duration")
-        var duration = it.intent
-        ev.setDuration(duration.toString())
+        if (duration != null) { ev.setDuration(duration.toString()) }
 
-        goto(Restart)
+        if (name != null) { ev.setName(name.toString()) }
+
+        ev.status = Constants.PENDING
+        reentry()
     }
 
     onResponse<Ordinal> {
         println("** Entered Ordinal")
         var ordinal = it.intent
-        print("Ordinal catched: " + ordinal.toString())
+        ev.status = Constants.PENDING
+        println("Ordinal catched: " + ordinal.toString())
 
-        goto(Restart)
+        reentry()
     }
 
-    onResponse<Name> {
-        println("** Entered Name")
-        var name = it.intent
-        ev.setName(name.toString())
+    onResponse<No> {}
 
-        goto(Restart)
+    onResponse<Yes> {
+        ev = EventObject()
+        furhat.say("What would you like to do?")
+        reentry()
+    }
+
+    onResponse<Greeting> {
+        furhat.say(random("Hello, how can I be of assistance today?", "Hi, how can I help you?"))
+        reentry()
     }
 }
 
@@ -152,7 +172,8 @@ val Final = state {
                     Tools.mapNameToID(ev)
                     furhat.say("Your event has been added to your calendar.")
                 } else {
-                    println("LETS BE PROACTIVE")
+                    ev.status = Constants.FAILED
+                    call(beProactive())
                     /** Handle it accordingly, by suggesting another day (if full, proactive) etc. */
                 }
             }
@@ -163,28 +184,48 @@ val Final = state {
                 furhat.say("Your " + Tools.interOptions(ev.bookStatement.toLowerCase(), Constants.REMOVE_PLURAL) +
                         " " + ev.day + " at " + Constants.FROM24HOUR.get(ev.startTime) + " has been removed from the calendar.")
             } else {
-                println("LETS BE PROACTIVE")
+                ev.status = Constants.FAILED
+                call(beProactive())
                 /** Be Proactive, "Did you mean {closest event} <- this event?" */
             }
 
         } else if (ev.intent == Constants.LIST_INTENT) {
-            call(ListEvents())
+            call(listEvents())
         } else {
-            call(GetEvent())
+            call(getEvent())
         }
 
-        ev = EventObject()
+        ev.status = Constants.SUCCESS
         goto(Start)
     }
 }
 
-fun ListEvents() = state {
+fun beProactive() = state {
     onEntry {
-        if (ev.startTime == null) {
+        println("******** LETS BE PROACTIVE ***********")
+        var suggestTimes = Tools.findAvailableTime(ev, 2, calendar)
+
+        Tools.printList(suggestTimes)
+
+        if (ev.intent == Constants.ADD_INTENT && ev.status == Constants.PENDING) { // Only Time Context and duration given
+
+        } else if (ev.intent == Constants.ADD_INTENT && ev.status == Constants.FAILED) { // Failed ADD
+
+        } else if (ev.intent == Constants.REMOVE_INTENT && ev.status == Constants.FAILED) { //Failed Remove
+
+        }
+        terminate()
+    }
+}
+
+fun listEvents() = state {
+    onEntry {
+        if (ev.timeContext == null) {
             var events = calendar.listEvents(ev)
             if (events == null || events.size <= 0) {
                 furhat.say("You do not have anything coming up " + ev.day)
-                goto(Restart)
+                ev.status = Constants.SUCCESS
+                goto(Start)
             }
             furhat.say(ev.day + " you have")
 
@@ -195,14 +236,15 @@ fun ListEvents() = state {
                                 Constants.FROM24HOUR.get(event.get(Constants.START_TIME)) + " called " + event.get(Constants.NAME)
                 )
             }
-        } else if (ev.timeContext != null) {
+        } else {
             var time_bounds = Constants.TimeOfDay.get(ev.timeContext)
             ev.startTime = time_bounds?.get(0)
             ev.endTime = time_bounds?.get(1)
             var events = calendar.listEvents(ev)
             if (events == null || events.size <= 0) {
                 furhat.say("You do not have anything coming up " + ev.day + " in the " + ev.timeContext)
-                goto(Restart)
+                ev.status = Constants.SUCCESS
+                goto(Start)
             }
             furhat.say(ev.day + " in the " + ev.timeContext + " you have")
             for (event in events) {
@@ -218,12 +260,13 @@ fun ListEvents() = state {
     }
 }
 
-fun GetEvent() = state {
+fun getEvent() = state {
     onEntry {
         var event = calendar.getEvent(ev)
         if (event == null || event.size <= 0) {
             furhat.say("There is no event " + ev.day + " at " + Constants.FROM24HOUR.get(ev.startTime))
-            goto(Restart)
+            ev.status = Constants.SUCCESS
+            goto(Start)
         }
         var event_info = event.get(0)
         furhat.say("The event " + ev.day + " at " + Constants.FROM24HOUR.get(ev.startTime)
@@ -234,7 +277,7 @@ fun GetEvent() = state {
     }
 }
 
-fun SetAddParams(it : Response<out Add>) = state {
+fun setAddParams(it : Response<out Add>) = state {
     onEntry {
 
         var startTime = it.intent.startTime
@@ -247,10 +290,10 @@ fun SetAddParams(it : Response<out Add>) = state {
         var addStatement = it.intent.addStatement
 
         if (date.toString().contains(Constants.TODAY)) {
-            ev.setDate(Constants.TODAY, true)
-        } else if (date != null || dayContext != null) {
+            ev.setDate(Constants.TODAY)
+        } else if ((date != null && date.toString() != "null") || (dayContext != null && dayContext.toString() != "null")) {
             var new_date = date.toString() + " " + dayContext
-            ev.setDate(new_date, true)
+            ev.setDate(new_date)
         }
 
         if (startTime != null) { ev.setTime(startTime.toString(), Constants.START_TIME) }
@@ -267,7 +310,7 @@ fun SetAddParams(it : Response<out Add>) = state {
     }
 }
 
-fun SetRemoveParams(it : Response<out Remove>) = state {
+fun setRemoveParams(it : Response<out Remove>) = state {
     onEntry {
         var startTime = it.intent.startTime
         var date = it.intent.date
@@ -277,10 +320,10 @@ fun SetRemoveParams(it : Response<out Remove>) = state {
         var removeStatement = it.intent.removeStatement
 
         if (date.toString().contains(Constants.TODAY)) {
-            ev.setDate(Constants.TODAY, true)
+            ev.setDate(Constants.TODAY)
         } else if (date != null || dayContext != null) {
             var new_date = date.toString() + " " + dayContext
-            ev.setDate(new_date, true)
+            ev.setDate(new_date)
         }
 
         if (startTime != null) { ev.setTime(startTime.toString(), Constants.START_TIME) }
@@ -293,7 +336,7 @@ fun SetRemoveParams(it : Response<out Remove>) = state {
     }
 }
 
-fun SetListParams(it : Response<out ListEv>) = state {
+fun setListParams(it : Response<out ListEv>) = state {
     onEntry {
         var startTime = it.intent.startTime
         var date = it.intent.date
@@ -302,10 +345,10 @@ fun SetListParams(it : Response<out ListEv>) = state {
         var listStatement = it.intent.listStatement
 
         if (date.toString().contains(Constants.TODAY)) {
-            ev.setDate(Constants.TODAY, true)
+            ev.setDate(Constants.TODAY)
         } else if (date != null || dayContext != null) {
             var new_date = date.toString() + " " + dayContext
-            ev.setDate(new_date, true)
+            ev.setDate(new_date)
         }
 
         if (startTime != null) { ev.setTime(startTime.toString(), Constants.START_TIME) }
@@ -313,13 +356,5 @@ fun SetListParams(it : Response<out ListEv>) = state {
         ev.bookStatement = bookStatement.toString()
         ev.listStatement = Tools.interOptions(listStatement.toString(), Constants.REMOVE_PLURAL)
         terminate()
-    }
-}
-
-
-val Restart = state(Interaction) {
-    onEntry {
-        goto(Start)
-
     }
 }
