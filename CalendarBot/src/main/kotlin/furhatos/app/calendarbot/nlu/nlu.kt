@@ -19,6 +19,7 @@ class Add(var date : Date? = null,
           var bookStatement : BookingStatement? = null): Intent() {
     override fun getExamples(lang: Language): List<String> {
         return listOf(
+                "@addStatement",
                 "@addStatement @bookStatement",
                 "@addStatement @bookStatement @date",
                 "@addStatement @bookStatement @duration",
@@ -34,6 +35,7 @@ class Remove(var removeStatement: RemoveStatement? = null,
              var dayContext : DayContext? = null) : Intent() {
     override fun getExamples(lang: Language): List<String> {
         return listOf(
+                "@removeStatement",
                 "@removeStatement @bookStatement",
                 "@removeStatement @bookStatement @date",
                 "@removeStatement @bookStatement @startTime",
@@ -48,25 +50,35 @@ class ListEv(var listStatement: ListStatement? = null,
              var dayContext : DayContext? = null) : Intent() {
     override fun getExamples(lang: Language): List<String> {
         return listOf(
+                "@listStatement",
                 "@listStatement @bookStatement",
                 "@listStatement @bookStatement @date",
-                "@listStatement @bookStatement @startTime")
+                "@listStatement @bookStatement @startTime",
+                "How does my schedule look on @date ?")
     }
 }
 
 class InfoIntent(
         var date : Date? = null,
-        var time : Time? = null,
+        var startTime : Time? = null,
         var duration : Duration? = null,
-        var name : PersonName? = null) : Intent() {
+        var name : PersonName? = null,
+        var endTime : Time? = null) : Intent() {
     override fun getExamples(lang: Language): List<String> {
-        return listOf("@date", "@time", "@duration", "@name", "@time @duration")
+        return listOf("@date", "@duration", "@name", "@startTime @endTime",
+                "until @endTime", "it will last @endTime", "I meant @startTime @endTime")
+    }
+}
+
+class Clear : Intent() {
+    override fun getExamples(lang: Language): List<String> {
+        return listOf("Clear everything", "scratch what i said", "never mind", "forget what i said", "start over")
     }
 }
 
 class ListStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("List", "Show", "Specify", "Tell", "Say", "Do")
+        return listOf("List", "Show", "Specify", "Tell", "Is there", "Coming Up")
     }
 }
 
@@ -78,7 +90,7 @@ class RemoveStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
 
 class AddStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("Schedule", "Book", "Put", "Add")
+        return listOf("Schedule", "Book", "Put", "Add", "Insert")
     }
 }
 

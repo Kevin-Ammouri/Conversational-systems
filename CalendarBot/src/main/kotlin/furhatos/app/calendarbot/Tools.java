@@ -101,6 +101,43 @@ public class Tools {
                 }
                 return statement;
 
+            default: //This is for configuring the day
+                //statement is date sent
+                //option is the format on how we should return
+                for (int i = 0; i < Constants.DAYS_OF_THE_WEEK.length; i++) {
+                    if (option.contains(Constants.DAYS_OF_THE_WEEK[i])) {
+                        try {
+                            DateFormatter formatter = new DateFormatter();
+                            String weekday = formatter.WeekDay(statement);
+                            return option.replace(Constants.DAYS_OF_THE_WEEK[i], weekday);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                String[] date = statement.split("-");
+                String day = date[date.length-1];
+                if (!day.startsWith("1") && day.endsWith("1")) {
+                    day += "st";
+                } else if (!day.startsWith("1") && day.endsWith("2")) {
+                    day += "nd";
+                } else if (!day.startsWith("1") && day.endsWith("3")){
+                    day += "rd";
+                } else {
+                    day += "th";
+                }
+
+                String[] StringBits = option.split(" ");
+                for(int i = 0; i < StringBits.length; i++) {
+                    if (StringBits[i].matches("-?\\d+th") ||
+                            StringBits[i].matches("-?\\d+nd") ||
+                            StringBits[i].matches("-?\\d+st")) {
+
+                        return option.replace(StringBits[i], day);
+
+                    }
+                }
         }
         return sendBack;
     }
@@ -301,12 +338,42 @@ public class Tools {
         return Integer.toString(finalResult);
     }
 
-    public static void printList(ArrayList<AvailableTimes> times) {
-        for (AvailableTimes at : times) {
-            System.out.println("DAY: " + at.day);
-            System.out.println("DATE: " + at.date);
-            System.out.println("AVAILABLE TIMES: " + at.startTimes.toString());
+    public static void debugPrint(EventObject ev) {
+        System.out.println("INTENT: " + ev.intent);
+
+        System.out.println("DATE: " + ev.date);
+        System.out.println("DAY: " + ev.day);
+        System.out.println("DAY CONTEXT: " + ev.dayContext);
+
+        System.out.println("START TIME: " + ev.startTime);
+        System.out.println("END TIME: " + ev.endTime);
+        System.out.println("TIME CONTEXT: " + ev.timeContext);
+        System.out.println("DURATION: " + ev.duration);
+
+        System.out.println("NAME: " + ev.name);
+        System.out.println("BOOK STATEMENT: " + ev.bookStatement);
+        System.out.println("bookStatement ends with s?: " + Tools.formType(ev.bookStatement));
+
+        System.out.println("NEXT INFO REQUIRED: " + ev.nextUnfilled());
+        System.out.println("------------------------------------");
+
+        /*
+        println("FURHAT CAUGHT DATE: " + it.intent.date.toString())
+        println("FURHAT CAUGHT startTime: " + it.intent.startTime.toString())
+        println("FURHAT CAUGHT endTime: " + it.intent.endTime.toString())
+        println("FURHAT CAUGHT duration: " + it.intent.duration.toString())
+        println("FURHAT CAUGHT daycontext: " + it.intent.dayContext.toString())
+        println("FURHAT CAUGHT name: " + it.intent.name.toString())
+        */
+    }
+
+    public static String getTimeContext(String time) {
+        for (int i = 0; i < Constants.TIMES_OF_THE_DAY.length; i++) {
+            ArrayList<String> times = Constants.TimeOfDay.get(Constants.TIMES_OF_THE_DAY[i].toLowerCase());
+            if (time.compareTo(times.get(0)) >= 0 && time.compareTo(times.get(1)) < 0)
+                return Constants.TIMES_OF_THE_DAY[i].toLowerCase();
         }
+        return null;
     }
 
     public static ArrayList<ArrayList<String>> availableGaps(EventObject ev, GoogleCalendar calendar, int day)
@@ -473,13 +540,14 @@ public class Tools {
             }else {
                 ev.date = df.addDate(ev.date, "0000-00-01");
             }
-            ev.day = "on " + df.WeekDay(ev.date).toLowerCase();
+            ev.day = interOptions(ev.date, startingDay);
             availableTimes.add(i, availableTime);
 
         }
         // Go back to the original date and day.
         ev.date = startingDate;
         ev.day = startingDay;
+
         return availableTimes;
     }
 }

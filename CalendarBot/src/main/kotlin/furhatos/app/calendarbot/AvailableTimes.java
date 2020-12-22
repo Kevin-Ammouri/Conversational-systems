@@ -3,7 +3,7 @@ package furhatos.app.calendarbot;
 import java.util.ArrayList;
 
 public class AvailableTimes {
-    String date;
-    String day;
-    ArrayList<String> startTimes;
+    public String date;
+    public String day;
+    public ArrayList<String> startTimes;
 }

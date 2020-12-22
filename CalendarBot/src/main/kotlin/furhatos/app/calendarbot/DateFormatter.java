@@ -21,10 +21,12 @@ public class DateFormatter {
     public String format(String s) throws ParseException {
         Calendar cal = Calendar.getInstance();
         Date curr = cal.getTime();
-        String[] DaysOfWeek = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
         String DateToAdd = "0000-00-00";
 
         boolean fixed = false;
+        if (s.toLowerCase().contains("next") && !s.toLowerCase().contains("week") && !s.toLowerCase().contains("month")) {
+            s += " 1 week";
+        }
         if (s.toLowerCase().contains("tomorrow")) {
             DateToAdd = "0000-00-01";
             fixed = true;
@@ -39,9 +41,9 @@ public class DateFormatter {
         }
         int idx = 0;
         String[] tmpArr = s.toLowerCase().split(" ");
-        if (!fixed && s.toLowerCase().contains("weeks")) {
+        if (!fixed && s.toLowerCase().contains("week")) {
             for (int i = 0; i < tmpArr.length; i++) {
-                if (tmpArr[i].equalsIgnoreCase("weeks")) {
+                if (tmpArr[i].equalsIgnoreCase("week")) {
                     idx = i;
                     break;
                 }
@@ -88,7 +90,7 @@ public class DateFormatter {
 
         //String date = addDate(DateToAdd);
         String dayTarget = "";
-        for (String day: DaysOfWeek) {
+        for (String day: Constants.DAYS_OF_THE_WEEK) {
             if (s.toLowerCase().contains(day)) {
                 dayTarget = day;
             }
@@ -204,5 +206,21 @@ public class DateFormatter {
         DateFormat format2 = new SimpleDateFormat("EEEE");
 
         return format2.format(DateFormat.parse(date));
+    }
+
+    public String getMonth(String day) throws ParseException {
+        SimpleDateFormat df = new SimpleDateFormat("dd m");
+        SimpleDateFormat toReturn = new SimpleDateFormat("MMMM");
+        Calendar cal = Calendar.getInstance();
+        Date now = cal.getTime();
+
+        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day));
+        Date tmp = cal.getTime();
+        if (tmp.before(now)) {
+            cal.add(Calendar.MONTH, 1);
+            tmp = cal.getTime();
+            return toReturn.format(tmp).toLowerCase();
+        }
+        return toReturn.format(tmp).toLowerCase();
     }
 }

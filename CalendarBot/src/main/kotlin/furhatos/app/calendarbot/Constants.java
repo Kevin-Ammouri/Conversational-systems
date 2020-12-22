@@ -57,6 +57,8 @@ public class Constants {
 
     public static final String MEETING = "meeting";
 
+    public static final String EVENT = "event";
+
     public static final String EVERYTHING = "everything";
 
     /** Interaction Options with Tools */
@@ -84,6 +86,10 @@ public class Constants {
 
     public static final String[] TIMES_OF_THE_DAY = {
             "Morning", "Afternoon", "Evening", "Night"
+    };
+
+    public static final String[] DAYS_OF_THE_WEEK = {
+            "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
     };
 
     /** Mappings */

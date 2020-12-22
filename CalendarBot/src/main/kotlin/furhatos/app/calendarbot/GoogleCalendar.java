@@ -6,6 +6,7 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 
@@ -65,12 +66,16 @@ public class GoogleCalendar {
 
     public boolean insertEvent(EventObject ev) {
         try {
-            String startTime = ev.date + "T" + ev.startTime + "+02:00";
-            String endTime = ev.date + "T" + ev.endTime + "+02:00";
+            String startTime = ev.date + "T" + ev.startTime + "+01:00";
+            String endTime = ev.date + "T" + ev.endTime + "+01:00";
+
+            ev.createID();
 
             Event event = new Event()
                     .setSummary(ev.bookStatement + "->" + ev.name)
                     .setId(ev.getID());
+
+            System.out.println("** CALENDAR ** ID = " + ev.getID());
 
             DateTime startDateTime = new DateTime(startTime);
             EventDateTime start = new EventDateTime()
@@ -90,14 +95,16 @@ public class GoogleCalendar {
             event = service.events().insert(calendarId, event).execute();
 
             return true;
-        }catch (Exception e) {
-            e.printStackTrace();
+        } catch (GoogleJsonResponseException e) {
+            return false;
+        } catch (Exception e) {
             return false;
         }
     }
 
     public boolean removeEvent(EventObject ev) {
         try {
+            ev.createID();
             service.events().delete("primary", ev.getID()).execute();
             return true;
         } catch (Exception e){
@@ -108,9 +115,10 @@ public class GoogleCalendar {
     public List<HashMap<String, String>> getEvent(EventObject ev) {
         try {
             Event event;
+            ev.createID();
+
             event = service.events().get("primary", ev.getID()).execute();
             DateTime start = event.getStart().getDateTime();
-            //System.out.printf("%s (%s)\n", event.getSummary(), start);
 
             System.out.printf("Successful get of EventObject: %s\n", ev.getID());
             List<Event> items = new ArrayList<>();

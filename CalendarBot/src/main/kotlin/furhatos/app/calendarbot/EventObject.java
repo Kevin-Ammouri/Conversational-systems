@@ -30,7 +30,7 @@ public class EventObject {
     public String removeStatement = null;
     public String listStatement = null;
 
-    /** For seeing current status */
+    /** Status codes and other options */
     public String status = Constants.PENDING;
 
     /** For formatting dates */
@@ -44,7 +44,8 @@ public class EventObject {
         switch(this.intent) {
             case Constants.ADD_INTENT:
                 if (day != null && date != null) {
-                    if (timeContext != null && duration != null) {
+
+                    if (timeContext != null && duration != null && startTime == null) {
                         return Constants.BE_PROACTIVE;
                     } else if (timeContext != null && duration == null) {
                         return Constants.DURATION;
@@ -110,9 +111,8 @@ public class EventObject {
 
         for(int i = 0; i < StringBits.length; i++) {
             if (number == null) {
-                if (StringBits[i].matches("-?\\d+th") ||
-                        StringBits[i].matches("-?\\d+nd") ||
-                    StringBits[i].matches("-?\\d+st")) {
+                if (StringBits[i].matches("-?\\d+th") || StringBits[i].matches("-?\\d+nd") ||
+                    StringBits[i].matches("-?\\d+st") || StringBits[i].matches("-?\\d+rd")) {
                     number = StringBits[i].substring(0, 2);
                 }
             }
@@ -129,6 +129,16 @@ public class EventObject {
                 break;
             }
         }
+
+
+        try {
+            if (number != null && month == null) {
+                number_month = number + " " + Formatter.getMonth(number);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
 
         try {
             if (number_month == null) {
@@ -147,10 +157,6 @@ public class EventObject {
             e.printStackTrace();
         }
 
-        if (this.startTime != null && this.date != null) {
-            this.createID();
-        }
-
         return specificDate;
     }
 
@@ -162,7 +168,6 @@ public class EventObject {
         String[] StringBits = time.split(" ");
         String number = null;
         String amORpm = null;
-        boolean timeContext = false;
         for(int i = 0; i < StringBits.length; i++) {
             if (amORpm == null) {
                 if (StringBits[i].equalsIgnoreCase("m")) {
@@ -184,13 +189,20 @@ public class EventObject {
 
         }
 
-        if (number == null && amORpm == null) {
+        boolean timeContext = false;
+        if (number == null || amORpm == null) {
             for (int i = 0; i < StringBits.length; i++) {
                 for (int j = 0; j < Constants.TIMES_OF_THE_DAY.length; j++)
                     if (StringBits[i].equalsIgnoreCase(Constants.TIMES_OF_THE_DAY[j])) {
                         timeContext = true;
                         this.timeContext = time.toLowerCase();
                     }
+            }
+            if (!timeContext) {
+                if (startOrEnd.equalsIgnoreCase(Constants.START_TIME))
+                    this.startTime = time;
+                else if (startOrEnd.equalsIgnoreCase(Constants.END_TIME))
+                    this.endTime = time;
             }
         } else {
             String toMilitary = Constants.TO24HOUR.get(number + " " + amORpm);
@@ -200,16 +212,16 @@ public class EventObject {
                 this.endTime = toMilitary;
         }
 
-        if (this.startTime != null && this.endTime != null && this.duration == null) {
-            try {
+        try {
+            if (this.startTime != null && this.endTime != null) {
                 this.duration = Formatter.addTime(this.endTime, "-" + this.startTime);
-            } catch (ParseException e) {
-                e.printStackTrace();
+            } else if (this.startTime != null && this.duration != null) {
+                this.endTime = Formatter.addTime(this.startTime, this.duration);
+            } else if (this.endTime != null && this.duration != null) {
+                this.startTime = Formatter.addTime(this.endTime, "-" + this.duration);
             }
-        }
-
-        if (this.startTime != null && this.date != null) {
-            this.createID();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         return timeContext;
@@ -242,12 +254,14 @@ public class EventObject {
         String duration_sent = number + " " + time;
         this.duration = Constants.TO24HOUR.get(duration_sent);
 
-        if (this.startTime != null && endTime == null) {
-            try {
+        try {
+            if (this.startTime != null && endTime == null) {
                 this.endTime = Formatter.addTime(this.startTime, this.duration);
-            } catch (ParseException e) {
-                e.printStackTrace();
+            } else if (this.startTime == null && this.endTime != null) {
+                this.startTime = Formatter.addTime(this.endTime, "-" + this.duration);
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
