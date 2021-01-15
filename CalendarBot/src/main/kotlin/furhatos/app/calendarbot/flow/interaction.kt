@@ -113,11 +113,13 @@ val Start : State = state(Interaction) {
         if (name != null) { ev.setName(name.toString()) }
 
         ev.status = Constants.PENDING
+        Tools.debugPrint(ev)
         reentry()
     }
 
     onResponse<No> {
         println("** Entered NO")
+        ev = EventObject()
     }
 
     onResponse<Yes> {
@@ -154,13 +156,17 @@ val Final = state {
             if (answer!!) {
                 var success = calendar.insertEvent(ev)
                 if (success) {
-                    Tools.mapNameToID(ev)
+                    ev.status = Constants.SUCCESS
+                    //Tools.mapNameToID(ev)
                     furhat.say("Your event has been added to your calendar.")
                 } else {
                     ev.status = Constants.FAILED
                     call(beProactive())
                     reentry()
                 }
+            } else {
+                ev.status = Constants.FAILED
+                goto(Start)
             }
         } else if (ev.intent == Constants.REMOVE_INTENT) {
 
@@ -171,6 +177,7 @@ val Final = state {
             if (answer!!) {
                 var success = calendar.removeEvent(ev)
                 if (success) {
+                    ev.status = Constants.SUCCESS
                     furhat.say("Your " + Tools.interOptions(ev.bookStatement.toLowerCase(), Constants.REMOVE_PLURAL) +
                             " " + ev.day + " at " + Constants.FROM24HOUR.get(ev.startTime) + " has been removed from the calendar.")
                 } else {
@@ -178,15 +185,19 @@ val Final = state {
                     call(beProactive())
                     reentry()
                 }
+            } else {
+                ev.status = Constants.FAILED
+                goto(Start)
             }
 
         } else if (ev.intent == Constants.LIST_INTENT) {
             call(listEvents())
+            ev.status = Constants.SUCCESS
         } else {
             call(getEvent())
+            ev.status = Constants.SUCCESS
         }
 
-        ev.status = Constants.SUCCESS
         goto(Start)
     }
 }
@@ -200,9 +211,9 @@ fun beProactive() = state {
             call(suggestTime(suggestTimes))
             terminate()
         } else if (ev.intent == Constants.ADD_INTENT && ev.status == Constants.FAILED) {
+            var time = ev.startTime
             var suggestTimes = Tools.findAvailableTime(ev, 7, calendar)
             for (at in suggestTimes) {
-                var time = ev.startTime
                 ev.startTime = null
                 ev.endTime = null
                 var events = calendar.listEvents(ev)
@@ -214,6 +225,7 @@ fun beProactive() = state {
                     }
                 }
                 ev.timeContext = Tools.getTimeContext(time)
+                println(ev.timeContext)
                 suggestTimes = Tools.findAvailableTime(ev, 2, calendar)
                 call(suggestTime(suggestTimes))
                 terminate()
@@ -223,6 +235,7 @@ fun beProactive() = state {
             ev.endTime = null
             var events = calendar.listEvents(ev)
             if (events == null || events.size <= 0) {
+                furhat.say("There are no events " + ev.day)
                 ev = EventObject()
                 goto(Start)
                 terminate()
@@ -247,7 +260,7 @@ fun suggestTime(suggestTimes : ArrayList<AvailableTimes>?) = state {
     onEntry {
         var firstTime = true
         for (at in suggestTimes!!) {
-            if (at.startTimes.isEmpty()) {
+            if (at.startTimes.isEmpty() && ev.intent != Constants.ADD_INTENT) {
                 furhat.say("Looks like your schedule is full " + ev.day + " in the " + ev.timeContext)
             }
             firstTime = true
@@ -292,6 +305,7 @@ fun listEvents() = state {
                                 Constants.FROM24HOUR.get(event.get(Constants.START_TIME)) + " called " + event.get(Constants.NAME)
                 )
             }
+            terminate(events)
         } else {
             var time_bounds = Constants.TimeOfDay.get(ev.timeContext)
             ev.startTime = time_bounds?.get(0)
@@ -311,9 +325,8 @@ fun listEvents() = state {
                                 Constants.FROM24HOUR.get(event.get(Constants.START_TIME)) + " called " + event.get(Constants.NAME)
                 )
             }
+            terminate(events)
         }
-
-        terminate()
     }
 }
 

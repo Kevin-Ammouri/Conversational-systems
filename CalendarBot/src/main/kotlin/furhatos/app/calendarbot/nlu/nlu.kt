@@ -39,7 +39,8 @@ class Remove(var removeStatement: RemoveStatement? = null,
                 "@removeStatement @bookStatement",
                 "@removeStatement @bookStatement @date",
                 "@removeStatement @bookStatement @startTime",
-                "@removeStatement @bookStatement @name")
+                "@removeStatement @bookStatement @name",
+                "@removeStatement @bookStatement from my schedule")
     }
 }
 
@@ -65,7 +66,7 @@ class InfoIntent(
         var name : PersonName? = null,
         var endTime : Time? = null) : Intent() {
     override fun getExamples(lang: Language): List<String> {
-        return listOf("@date", "@duration", "@name", "@startTime @endTime",
+        return listOf("@date", "@duration", "@name", "@startTime @endTime", "it is scheduled at @startTime",
                 "until @endTime", "it will last @endTime", "I meant @startTime @endTime")
     }
 }
@@ -78,7 +79,7 @@ class Clear : Intent() {
 
 class ListStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("List", "Show", "Specify", "Tell", "Is there", "Coming Up")
+        return listOf("List", "Show", "Specify", "Tell", "Is there", "Coming Up", "Do I")
     }
 }
 
@@ -96,7 +97,7 @@ class AddStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
 
 class BookingStatement : EnumEntity(stemming = true, speechRecPhrases = true) {
     override fun getEnum(lang: Language): List<String> {
-        return listOf("Meeting", "Event", "Appointment", "Everything")
+        return listOf("Meeting", "Event", "Appointment", "Deadline")
     }
 }
 

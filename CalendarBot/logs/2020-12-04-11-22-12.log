@@ -1,0 +1,4 @@
+11:22:12 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+11:22:12 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+11:22:13 [pool-2-thread-1] ERROR Interpreter: 50 - Could not preload entity furhatos.app.calendarbot.nlu.DataWrapper, : No .enu file for DataWrapper in language en-US found
+11:22:13 [pool-2-thread-1] ERROR Interpreter: 50 - Could not preload entity furhatos.app.calendarbot.nlu.DataWrapper, : No .enu file for DataWrapper in language en-US found

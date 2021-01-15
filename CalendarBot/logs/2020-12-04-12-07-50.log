@@ -1,0 +1,12 @@
+12:07:51 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+12:07:51 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+12:07:52 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:07:52 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:07:52 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @date in Add
+12:07:52 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:07:52 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:08:05 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:08:05 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:08:05 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @date in Add
+12:08:05 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:08:05 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add

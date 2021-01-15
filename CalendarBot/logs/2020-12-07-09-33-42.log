@@ -1,0 +1,25 @@
+09:33:42 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+09:33:42 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+09:33:43 [pool-2-thread-1] WARN  ComplexEnumEntity: 54 - Not field with name 'duration' in class furhatos.app.calendarbot.nlu.DateWrapper
+09:33:43 [pool-2-thread-1] WARN  ComplexEnumEntity: 54 - Not field with name 'duration' in class furhatos.app.calendarbot.nlu.DateWrapper
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @timeOfDay in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @dayContext in Add
+09:33:43 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @timeOfDay in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @timeOfDay in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @dayContext in Add
+09:33:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @timeOfDay in Add
+09:34:03 [EventSystem] INFO  CalendarbotSkill:184 - Terminating skill

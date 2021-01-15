@@ -1,0 +1,4 @@
+14:41:09 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+14:41:09 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+14:41:14 [pool-2-thread-1] ERROR Interpreter: 50 - Could not preload entity furhatos.app.calendarbot.nlu.dateAndDayContext, : No .enu file for dateAndDayContext in language en-US found
+14:41:14 [pool-2-thread-1] ERROR Interpreter: 50 - Could not preload entity furhatos.app.calendarbot.nlu.dateAndDayContext, : No .enu file for dateAndDayContext in language en-US found

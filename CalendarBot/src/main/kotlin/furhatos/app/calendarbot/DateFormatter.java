@@ -43,7 +43,7 @@ public class DateFormatter {
         String[] tmpArr = s.toLowerCase().split(" ");
         if (!fixed && s.toLowerCase().contains("week")) {
             for (int i = 0; i < tmpArr.length; i++) {
-                if (tmpArr[i].equalsIgnoreCase("week")) {
+                if (tmpArr[i].contains("week")) {
                     idx = i;
                     break;
                 }

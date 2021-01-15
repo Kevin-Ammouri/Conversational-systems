@@ -1,0 +1,22 @@
+12:54:57 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+12:54:57 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+12:54:58 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:54:58 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:54:58 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:54:58 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+12:55:05 [CalendarbotSkill] ERROR TriggerRunner: 33 - Error
+java.lang.NullPointerException
+	at furhatos.app.calendarbot.EventObject.setStartTime(Event.java:61)
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1$2.invoke(interaction.kt:20)
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1$2.invoke(interaction.kt)
+	at furhatos.flow.kotlin.TriggerRunner.run(TriggerRunner.kt:31)
+	at furhatos.flow.kotlin.Runner.runTrigger(Runner.kt:204)
+	at furhatos.flow.kotlin.Runner.runTrigger$default(Runner.kt:176)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:57)
+	at furhatos.flow.kotlin.Flow.tailRecRun(Flow.kt:146)
+	at furhatos.flow.kotlin.Flow.run(Flow.kt:110)
+	at furhatos.app.calendarbot.CalendarbotSkill.start(main.kt:9)
+	at furhatos.skills.Skill.initializeSkill(Skill.java:169)
+	at furhatos.skills.Skill.lambda$startSkill$2(Skill.java:227)
+	at java.lang.Thread.run(Thread.java:748)
+12:55:10 [EventSystem] INFO  CalendarbotSkill:184 - Terminating skill

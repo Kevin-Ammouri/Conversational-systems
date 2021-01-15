@@ -1,0 +1,16 @@
+13:00:01 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+13:00:02 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+13:00:03 [ErrorLoggingThread] ERROR CalendarbotSkill:459 - Exception in thread "CalendarbotSkill" java.lang.IllegalArgumentException: Class should have a single no-arg constructor: class furhatos.app.calendarbot.nlu.Add
+	at kotlin.reflect.full.KClasses.createInstance(KClasses.kt:281)
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1.invoke(interaction.kt:142)
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1.invoke(interaction.kt)
+	at furhatos.flow.kotlin.State.makeState$furhat_commons(State.kt:100)
+	at furhatos.flow.kotlin.StateRunner.<init>(StateRunner.kt:19)
+	at furhatos.flow.kotlin.StateRunner.<init>(StateRunner.kt:18)
+	at furhatos.flow.kotlin.Flow.tailRecRun(Flow.kt:145)
+	at furhatos.flow.kotlin.Flow.run(Flow.kt:110)
+	at furhatos.app.calendarbot.CalendarbotSkill.start(main.kt:9)
+	at furhatos.skills.Skill.initializeSkill(Skill.java:169)
+	at furhatos.skills.Skill.lambda$startSkill$2(Skill.java:227)
+	at java.lang.Thread.run(Thread.java:748)
+

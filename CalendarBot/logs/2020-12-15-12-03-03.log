@@ -1,0 +1,33 @@
+12:03:03 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+12:03:03 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+12:03:27 [CalendarbotSkill] ERROR TriggerRunner: 33 - Error
+java.lang.NullPointerException
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1$4.invoke(interaction.kt:161)
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1$4.invoke(interaction.kt)
+	at furhatos.flow.kotlin.TriggerRunner.run(TriggerRunner.kt:31)
+	at furhatos.flow.kotlin.Runner.runTrigger(Runner.kt:204)
+	at furhatos.flow.kotlin.Runner.runTrigger$default(Runner.kt:176)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:57)
+	at furhatos.flow.kotlin.Flow.tailRecRun(Flow.kt:146)
+	at furhatos.flow.kotlin.Flow.run(Flow.kt:110)
+	at furhatos.app.calendarbot.CalendarbotSkill.start(main.kt:9)
+	at furhatos.skills.Skill.initializeSkill(Skill.java:169)
+	at furhatos.skills.Skill.lambda$startSkill$2(Skill.java:227)
+	at java.lang.Thread.run(Thread.java:748)
+12:03:27 [ErrorLoggingThread] ERROR CalendarbotSkill:459 - java.text.ParseException: Unparseable date: "on Friday 2020"
+	at java.text.DateFormat.parse(DateFormat.java:366)
+	at furhatos.app.calendarbot.DateFormatter.getDate(DateFormatter.java:137)
+	at furhatos.app.calendarbot.EventObject.setDate(EventObject.java:85)
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1$4.invoke(interaction.kt:158)
+	at furhatos.app.calendarbot.flow.InteractionKt$Start$1$4.invoke(interaction.kt)
+	at furhatos.flow.kotlin.TriggerRunner.run(TriggerRunner.kt:31)
+	at furhatos.flow.kotlin.Runner.runTrigger(Runner.kt:204)
+	at furhatos.flow.kotlin.Runner.runTrigger$default(Runner.kt:176)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:57)
+	at furhatos.flow.kotlin.Flow.tailRecRun(Flow.kt:146)
+	at furhatos.flow.kotlin.Flow.run(Flow.kt:110)
+	at furhatos.app.calendarbot.CalendarbotSkill.start(main.kt:9)
+	at furhatos.skills.Skill.initializeSkill(Skill.java:169)
+	at furhatos.skills.Skill.lambda$startSkill$2(Skill.java:227)
+	at java.lang.Thread.run(Thread.java:748)
+

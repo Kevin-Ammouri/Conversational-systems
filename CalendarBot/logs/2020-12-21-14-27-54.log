@@ -1,0 +1,54 @@
+14:27:54 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+14:27:54 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+14:28:23 [ErrorLoggingThread] ERROR CalendarbotSkill:459 - com.google.api.client.googleapis.json.GoogleJsonResponseException: 409 Conflict
+{
+  "code" : 409,
+  "errors" : [ {
+    "domain" : "global",
+    "message" : "The requested identifier already exists.",
+    "reason" : "duplicate"
+  } ],
+  "message" : "The requested identifier already exists."
+}
+	at com.google.api.client.googleapis.json.GoogleJsonResponseException.from(GoogleJsonResponseException.java:150)
+	at com.google.api.client.googleapis.services.json.AbstractGoogleJsonClientRequest.newExceptionOnError(AbstractGoogleJsonClientRequest.java:113)
+	at com.google.api.client.googleapis.services.json.AbstractGoogleJsonClientRequest.newExceptionOnError(AbstractGoogleJsonClientRequest.java:40)
+	at com.google.api.client.googleapis.services.AbstractGoogleClientRequest$1.interceptResponse(AbstractGoogleClientRequest.java:443)
+	at com.google.api.client.http.HttpRequest.execute(HttpRequest.java:1092)
+	at com.google.api.client.googleapis.services.AbstractGoogleClientRequest.executeUnparsed(AbstractGoogleClientRequest.java:541)
+	at com.google.api.client.googleapis.services.AbstractGoogleClientRequest.executeUnparsed(AbstractGoogleClientRequest.java:474)
+	at com.google.api.client.googleapis.services.AbstractGoogleClientRequest.execute(AbstractGoogleClientRequest.java:591)
+	at furhatos.app.calendarbot.GoogleCalendar.insertEvent(GoogleCalendar.java:94)
+	at furhatos.app.calendarbot.flow.InteractionKt$Final$1$1.invoke(interaction.kt:171)
+	at furhatos.app.calendarbot.flow.InteractionKt$Final$1$1.invoke(interaction.kt)
+	at furhatos.flow.kotlin.StateRunner.runEntryTrigger(StateRunner.kt:180)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:65)
+	at furhatos.flow.kotlin.Flow.tailRecRun(Flow.kt:146)
+	at furhatos.flow.kotlin.Flow.run(Flow.kt:110)
+	at furhatos.app.calendarbot.CalendarbotSkill.start(main.kt:9)
+	at furhatos.skills.Skill.initializeSkill(Skill.java:169)
+	at furhatos.skills.Skill.lambda$startSkill$2(Skill.java:227)
+	at java.lang.Thread.run(Thread.java:748)
+
+14:28:24 [CalendarbotSkill] ERROR StateRunner:186 - java.lang.NullPointerException
+14:28:24 [CalendarbotSkill] WARN  Flow: 93 - Flow unknown unresponsive, 1130 ms since last event poll
+14:28:24 [ErrorLoggingThread] ERROR CalendarbotSkill:459 - java.lang.NullPointerException
+	at furhatos.app.calendarbot.Tools.getTimeContext(Tools.java:352)
+	at furhatos.app.calendarbot.flow.InteractionKt$beProactive$1$1.invoke(interaction.kt:223)
+	at furhatos.app.calendarbot.flow.InteractionKt$beProactive$1$1.invoke(interaction.kt)
+	at furhatos.flow.kotlin.StateRunner.runEntryTrigger(StateRunner.kt:180)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:65)
+	at furhatos.flow.kotlin.FlowControlRunner.tailRecRunCall(FlowControlRunner.kt:89)
+	at furhatos.flow.kotlin.FlowControlRunner.call(FlowControlRunner.kt:61)
+	at furhatos.flow.kotlin.FlowControlRunner.call$default(FlowControlRunner.kt:55)
+	at furhatos.app.calendarbot.flow.InteractionKt$Final$1$1.invoke(interaction.kt:177)
+	at furhatos.app.calendarbot.flow.InteractionKt$Final$1$1.invoke(interaction.kt)
+	at furhatos.flow.kotlin.StateRunner.runEntryTrigger(StateRunner.kt:180)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:65)
+	at furhatos.flow.kotlin.Flow.tailRecRun(Flow.kt:146)
+	at furhatos.flow.kotlin.Flow.run(Flow.kt:110)
+	at furhatos.app.calendarbot.CalendarbotSkill.start(main.kt:9)
+	at furhatos.skills.Skill.initializeSkill(Skill.java:169)
+	at furhatos.skills.Skill.lambda$startSkill$2(Skill.java:227)
+	at java.lang.Thread.run(Thread.java:748)
+

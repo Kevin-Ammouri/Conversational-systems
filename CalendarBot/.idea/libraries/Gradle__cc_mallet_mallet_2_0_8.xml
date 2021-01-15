@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: cc.mallet:mallet:2.0.8">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/cc.mallet/mallet/2.0.8/98e54e773cff5bd93ea971ac9331a5c5cc67dc4b/mallet-2.0.8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/cc.mallet/mallet/2.0.8/4338cefe225b371e41109f32474b18cfafd8c49b/mallet-2.0.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

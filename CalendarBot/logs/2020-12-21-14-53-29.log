@@ -1,0 +1,4 @@
+14:53:29 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+14:53:29 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+14:53:49 [CalendarbotSkill] WARN  Flow: 93 - Flow unknown unresponsive, 1092 ms since last event poll
+14:54:09 [EventSystem] INFO  CalendarbotSkill:184 - Terminating skill

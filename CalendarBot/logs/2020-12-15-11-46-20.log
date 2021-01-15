@@ -1,0 +1,4 @@
+11:46:20 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+11:46:20 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+11:46:39 [CalendarbotSkill] WARN  Furhat:190 - furhat.say() was called with an empty string
+11:46:43 [EventSystem] INFO  CalendarbotSkill:184 - Terminating skill

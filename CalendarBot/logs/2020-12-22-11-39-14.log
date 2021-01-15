@@ -1,0 +1,22 @@
+11:39:14 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+11:39:14 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+11:39:28 [CalendarbotSkill] ERROR StateRunner:186 - java.lang.NullPointerException
+11:39:28 [ErrorLoggingThread] ERROR CalendarbotSkill:459 - java.lang.NullPointerException
+	at furhatos.app.calendarbot.flow.InteractionKt$listEvents$1$1.invoke(interaction.kt:274)
+	at furhatos.app.calendarbot.flow.InteractionKt$listEvents$1$1.invoke(interaction.kt)
+	at furhatos.flow.kotlin.StateRunner.runEntryTrigger(StateRunner.kt:180)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:65)
+	at furhatos.flow.kotlin.FlowControlRunner.tailRecRunCall(FlowControlRunner.kt:89)
+	at furhatos.flow.kotlin.FlowControlRunner.call(FlowControlRunner.kt:61)
+	at furhatos.flow.kotlin.FlowControlRunner.call$default(FlowControlRunner.kt:55)
+	at furhatos.app.calendarbot.flow.InteractionKt$Final$1$1.invoke(interaction.kt:181)
+	at furhatos.app.calendarbot.flow.InteractionKt$Final$1$1.invoke(interaction.kt)
+	at furhatos.flow.kotlin.StateRunner.runEntryTrigger(StateRunner.kt:180)
+	at furhatos.flow.kotlin.StateRunner.run(StateRunner.kt:65)
+	at furhatos.flow.kotlin.Flow.tailRecRun(Flow.kt:146)
+	at furhatos.flow.kotlin.Flow.run(Flow.kt:110)
+	at furhatos.app.calendarbot.CalendarbotSkill.start(main.kt:9)
+	at furhatos.skills.Skill.initializeSkill(Skill.java:169)
+	at furhatos.skills.Skill.lambda$startSkill$2(Skill.java:227)
+	at java.lang.Thread.run(Thread.java:748)
+

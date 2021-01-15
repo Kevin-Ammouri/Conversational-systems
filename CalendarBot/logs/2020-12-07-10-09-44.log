@@ -1,0 +1,12 @@
+10:09:44 [Skill] INFO  Skill:139 - Connecting to Furhat server on 0.0.0.0:1932
+10:09:44 [CalendarbotSkill] INFO  CalendarbotSkill:166 - Starting skill
+10:09:48 [pool-2-thread-1] WARN  ComplexEnumEntity: 54 - Not field with name 'duration' in class furhatos.app.calendarbot.nlu.DateWrapper
+10:09:48 [pool-2-thread-1] WARN  ComplexEnumEntity: 54 - Not field with name 'duration' in class furhatos.app.calendarbot.nlu.DateWrapper
+10:09:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+10:09:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+10:09:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+10:09:48 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+10:09:55 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+10:09:55 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+10:09:55 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add
+10:09:55 [pool-2-thread-1] ERROR IdfMultiIntentClassifier:249 - Could not find class for entity @null in Add

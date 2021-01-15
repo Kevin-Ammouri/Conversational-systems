@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Tools {
     public static boolean formType(String bookStatement) {
+        if (bookStatement == null) return false;
         return bookStatement.endsWith("s");
     }
 
